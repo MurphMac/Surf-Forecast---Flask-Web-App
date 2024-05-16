@@ -1,0 +1,15 @@
+body {
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+body > h1 {
+    color: teal;
+    text-align: center;
+    vertical-align: center;
+    font-size: 60px;
+}
+
+body > p {
+    text-align: center;
+    font-style: italic;
+}
