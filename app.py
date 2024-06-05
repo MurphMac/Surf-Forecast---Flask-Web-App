@@ -1,8 +1,5 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template
 import pandas as pd
-import matplotlib.pyplot as plt
-import io
-import base64
 
 app = Flask(__name__)
 
@@ -13,20 +10,28 @@ def index():
 
 @app.route('/data')
 
-def data():
+def graphs():
+    # source data
     df = pd.read_csv('data\swan_gfs_nz-ncanterb_v3.0_rb70bv50.csv')
 
-    #return df.to_html()
+    # sample data test
+    data = [
+        (1, 5),
+        (2, 12),
+        (3, 22),
+        (4, 4),
+        (5, 1),
+        (6, 23),
+        (7, 8),
+        (8, 17),
+    ]
 
-    #set up image
-    img = io.BytesIO()
-    #plot data
-    df.plot()
-    plt.savefig(img, format='png')
-    plt.close()
-    img.seek(0)
-    plot_url = base64.b64encode(img.getvalue()).decode('utf8')
-    return render_template("data.html", plot_url=plot_url)
+    # get x and y values from sample data
+    labels = [row[0] for row in data]
+    values = [row[1] for row in data]
+    
+    #return html with data
+    return render_template('data.html', labels=labels, values=values)
 
 
 if __name__ == "__main__":
