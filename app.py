@@ -14,22 +14,20 @@ def graphs():
     # source data
     df = pd.read_csv('data\swan_gfs_nz-ncanterb_v3.0_rb70bv50.csv')
 
-    # sample data test
-    data = [
-        (1, 5),
-        (2, 12),
-        (3, 22),
-        (4, 4),
-        (5, 1),
-        (6, 23),
-        (7, 8),
-        (8, 17),
-    ]
+    # Create a list of tuples containing time and swell size
+    data = list(zip(df['time:Pacific/Auckland'], df['hs:m']))
 
-    # get x and y values from sample data
-    labels = [row[0] for row in data]
+    dates = [row[0] for row in data]
     values = [row[1] for row in data]
-    
+    labels = []
+
+    for times in dates:
+        #Add only time of day to labels
+        labels.append(times[11:16])
+
+    for i in range(12):
+        labels.pop()
+
     #return html with data
     return render_template('data.html', labels=labels, values=values)
 

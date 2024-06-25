@@ -10,8 +10,38 @@
     <canvas id="lineChart" width="900" height="400"></canvas>
     <script>
         var ctx = document.getElementById("lineChart").getContext("2d");
+        
+        var chartAreaBackgroundColor = {
+            id: "chartAreaBackgroundColor",
+            beforeDraw: function(chart) {
+                var ctx = chart.chart.ctx;
+                var chartArea = chart.chartArea;
+                var firstSeventh = chartArea.left + (chartArea.right - chartArea.left) * (24/168);
+                var secondSeventh = chartArea.left + (chartArea.right - chartArea.left) * (2*24/168);
+                var thirdSeventh = chartArea.left + (chartArea.right - chartArea.left) * (3*24/168);
+                var fourthSeventh = chartArea.left + (chartArea.right - chartArea.left) * (4*24/168);
+                var fifthSeventh = chartArea.left + (chartArea.right - chartArea.left) * (5*24/168);
+                var sixthSeventh = chartArea.left + (chartArea.right - chartArea.left) * (6*24/168);
+
+                ctx.save();
+                ctx.fillStyle = 'rgba(200, 200, 200, 0.5)';
+                ctx.fillRect(chartArea.left, chartArea.top, firstSeventh - chartArea.left, chartArea.bottom - chartArea.top);
+                ctx.fillRect(secondSeventh, chartArea.top, thirdSeventh - secondSeventh, chartArea.bottom - chartArea.top);
+                ctx.fillRect(fourthSeventh, chartArea.top, fifthSeventh - fourthSeventh, chartArea.bottom - chartArea.top);
+                ctx.fillRect(sixthSeventh, chartArea.top, chartArea.right - sixthSeventh, chartArea.bottom - chartArea.top);
+                ctx.restore();
+            }
+        };
+
+        // Variable for data values
+        var values = {{ values | safe }};
+        // Find maximum of individual elements in array
+        var maxVal = Math.max(...values);
+        
+        // Make chart
         var lineChart = new Chart(ctx, {
             type: "line",
+            backgroundColor: 'red',
             data: {
                 labels: {{ labels | safe }},
                 datasets: [
@@ -19,14 +49,27 @@
                         label: "Data points",
                         data: {{ values | safe }},
                         fill: true,
-                        borderColor: "rgb(75, 192, 192)",
-                        lineTension: 0.3
+                        borderColor: "rgb(0, 150, 255)",
+                        borderWidth: 5,
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(90, 170, 200, 0.5)"
                     }
                 ]
             },
+
             options: {
-                responsive: true
-            }
+                responsive: true,
+                // Manually change y axis scale
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            // Add space above maximum value
+                            max: maxVal+0.2
+                        }
+                    }]
+                }
+            },
+            plugins: [chartAreaBackgroundColor]
         });
     </script>
 </body>
