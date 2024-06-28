@@ -12,13 +12,16 @@ def index():
 
 def graphs():
     # source data
-    df = pd.read_csv('data\swan_gfs_nz-ncanterb_v3.0_rb70bv50.csv')
+    df_swell = pd.read_csv('data\swan_gfs_nz-ncanterb_v3.0_rb70bv50.csv')
+    # df_wind = pd.read_csv('data\gfs025_sub_v1.0.csv')
 
     # Create a list of tuples containing time and swell size
-    data = list(zip(df['time:Pacific/Auckland'], df['hs:m']))
+    swell_data = list(zip(df_swell['time:Pacific/Auckland'], df_swell['hs:m']))
+    # List of wave period data
+    values2 = list(df_swell['tp:s'])
 
-    dates = [row[0] for row in data]
-    values = [row[1] for row in data]
+    dates = [row[0] for row in swell_data]
+    values1 = [row[1] for row in swell_data]
     labels = []
 
     for times in dates:
@@ -29,8 +32,7 @@ def graphs():
         labels.pop()
 
     #return html with data
-    return render_template('data.html', labels=labels, values=values)
-
+    return render_template('data.html', labels=labels, values1=values1, values2=values2)
 
 if __name__ == "__main__":
     app.run(debug=True)

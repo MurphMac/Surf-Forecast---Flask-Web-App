@@ -16,6 +16,7 @@
             beforeDraw: function(chart) {
                 var ctx = chart.chart.ctx;
                 var chartArea = chart.chartArea;
+                // Split chart into 7 areas (horizontally)
                 var firstSeventh = chartArea.left + (chartArea.right - chartArea.left) * (24/168);
                 var secondSeventh = chartArea.left + (chartArea.right - chartArea.left) * (2*24/168);
                 var thirdSeventh = chartArea.left + (chartArea.right - chartArea.left) * (3*24/168);
@@ -25,6 +26,7 @@
 
                 ctx.save();
                 ctx.fillStyle = 'rgba(200, 200, 200, 0.5)';
+                // Fill 4/7 with darker shade
                 ctx.fillRect(chartArea.left, chartArea.top, firstSeventh - chartArea.left, chartArea.bottom - chartArea.top);
                 ctx.fillRect(secondSeventh, chartArea.top, thirdSeventh - secondSeventh, chartArea.bottom - chartArea.top);
                 ctx.fillRect(fourthSeventh, chartArea.top, fifthSeventh - fourthSeventh, chartArea.bottom - chartArea.top);
@@ -34,9 +36,9 @@
         };
 
         // Variable for data values
-        var values = {{ values | safe }};
+        var values1 = {{ values1 | safe }};
         // Find maximum of individual elements in array
-        var maxVal = Math.max(...values);
+        var maxVal = Math.max(...values1);
         
         // Make chart
         var lineChart = new Chart(ctx, {
@@ -46,13 +48,28 @@
                 labels: {{ labels | safe }},
                 datasets: [
                     {
-                        label: "Data points",
-                        data: {{ values | safe }},
+                        label: "Swell Height (m)",
+                        data: {{ values1 | safe }},
                         fill: true,
                         borderColor: "rgb(0, 150, 255)",
                         borderWidth: 5,
                         lineTension: 0.3,
-                        backgroundColor: "rgba(90, 170, 200, 0.5)"
+                        pointRadius: 0,
+                        pointHoverRadius: 0,
+                        backgroundColor: "rgba(90, 170, 200, 0.5)",
+                        yAxisID: 'y-axis-1'
+                    },
+                    {
+                        label: "Period (s)",
+                        data: {{ values2 | safe }},
+                        fill: false,
+                        borderColor: "rgb(255, 0, 0)",
+                        borderWidth: 3,
+                        lineTension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 0,
+                        // backgroundColor: "rgba(90, 170, 200, 0.5)",
+                        yAxisID: 'y-axis-2'
                     }
                 ]
             },
@@ -62,9 +79,36 @@
                 // Manually change y axis scale
                 scales: {
                     yAxes: [{
+                        id: 'y-axis-1',
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
                         ticks: {
                             // Add space above maximum value
-                            max: maxVal+0.2
+                            max: maxVal + (maxVal/2),
+                            min: 0
+                        },
+                        // Axis Title
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Swell Height (m)",
+                            color: "rgb(0, 150, 255)"
+                        }
+                    },
+                    {
+                        id: 'y-axis-2',
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        ticks: {
+                            min: 0,
+                            max: 20
+                        },
+                        // Axis Title
+                        scaleLabel: {
+                                display: true,
+                                labelString: "Period (s)",
+                                color: "rgb(255, 0, 0)"
                         }
                     }]
                 }
