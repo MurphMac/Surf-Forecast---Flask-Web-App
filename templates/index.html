@@ -8,8 +8,34 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
-    <h1>Website</h1>
-    <p>Description</p>
-    <p></p>
+    <div class="wrapper">
+        <div class="box logo">
+            Logo
+        </div>
+        <div class="box banner">
+            Banner
+        </div>
+        <div class="box nav">
+            Nav
+        </div>
+        <div class="box main">
+            <h1>Main</h1>
+            <div class="dailyinfo">
+                Daily Info
+            </div>
+            <div class="graph1">
+                <iframe src="/data" scrolling="no"></iframe>
+            </div>
+            <div class="graph2">
+                Graph 2
+            </div>
+            <div class="graph3">
+                Graph 3
+            </div>
+        </div>
+        <div class="box footer">
+            Footer
+        </div>
+    </div>
 </body>
 </html>
