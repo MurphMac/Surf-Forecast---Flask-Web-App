@@ -110,12 +110,15 @@
                         ticks: {
                             // Add space above maximum value
                             max: maxVal + (maxVal/2),
-                            min: 0
+                            min: 0,
+                            callback: function(value, index, values) {
+                            // Format the label to have 2 decimal places
+                            return value.toFixed(2); 
+                            }
                         },
                         // Axis Title
                         scaleLabel: {
                             display: true,
-                            labelString: "Swell Height (m)",
                             color: "rgb(0, 150, 255)"
                         }
                     },
@@ -126,12 +129,14 @@
                         position: 'right',
                         ticks: {
                             min: 0,
-                            max: 20
+                            max: 20,
+                            callback: function(value) {
+                                return Number(value).toPrecision(3);
+                            }
                         },
                         // Axis Title
                         scaleLabel: {
                                 display: true,
-                                labelString: "Period (s)",
                                 color: "rgb(255, 0, 0)"
                         }
                     }]

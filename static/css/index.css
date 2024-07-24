@@ -10,7 +10,6 @@ body {
     "logo banner nav"
     "main main main"
     "footer footer footer";
-    grid-gap: 5px;
 }
 
 .box {
@@ -42,11 +41,11 @@ body {
 .graph1, .graph2, .graph3 {
     position: relative;
     height: 40vh;
-    width: 100vw;
+    width: 100%;
     background-color: white;
 }
 
-.graph1 > iframe {
+.graph2 > iframe, .graph1 > iframe {
     width: 100%;
     height: 40vh;
     border: none;
