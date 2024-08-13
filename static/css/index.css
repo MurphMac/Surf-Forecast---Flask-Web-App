@@ -50,3 +50,36 @@ body {
     height: 40vh;
     border: none;
 }
+
+.data {
+    width: 100%;
+    border: none;
+}
+
+.data.days {
+    display: flex;
+    justify-content: space-around; 
+    width: calc(100% - 125px);
+    margin: auto;
+    background-color: red;
+}
+
+.days > span {
+    flex: 1; 
+    text-align: center;
+    background-color: white;
+    font-size: 13px; 
+    padding: 5px;  
+}
+
+@media (max-aspect-ratio: 1/1) {
+    .days > span {
+        font-size: 8px;
+    }
+}
+
+@media (min-aspect-ratio: 1/1) {
+    .days > span {
+        font-size: 13px;
+    }
+}

@@ -26,12 +26,11 @@
     </style>
 </head>
 <body>
-    <div class="chart-container">
-        <canvas id="lineChart"></canvas>
-    </div>
+    <canvas id="lineChart" width="900" height="400"></canvas>
+    <canvas id="cv_values"></canvas>
     <script>
         var ctx = document.getElementById("lineChart").getContext("2d");
-
+        
         // Change background colour to grey and white to show days
         var chartAreaBackgroundColor = {
             id: "chartAreaBackgroundColor",
@@ -65,71 +64,87 @@
         // Make chart
         var lineChart = new Chart(ctx, {
             type: "line",
+            backgroundColor: 'red',
             data: {
                 labels: {{ labels | safe }},
                 datasets: [
                     {
-                        label: "Wind Speed (kts)",
+                        label: "Swell Height (m)",
                         data: {{ values1 | safe }},
-                        fill: false,
-                        borderColor: "rgb(0, 255, 150)",
+                        fill: true,
+                        borderColor: "rgb(0, 150, 255)",
                         borderWidth: 5,
                         lineTension: 0.3,
                         pointRadius: 0,
                         pointHoverRadius: 0,
                         backgroundColor: "rgba(90, 170, 200, 0.5)",
+                        yAxisID: 'y-axis-1'
                     },
                     {
-                        label: "Wind Gusts (kts)",
+                        label: "Period (s)",
                         data: {{ values2 | safe }},
                         fill: false,
-                        borderColor: "rgb(100, 255, 100)",
-                        borderWidth: 5,
+                        borderColor: "rgb(255, 0, 0)",
+                        borderWidth: 3,
                         lineTension: 0.3,
                         pointRadius: 0,
                         pointHoverRadius: 0,
-                        backgroundColor: "rgba(90, 170, 200, 0.5)",
+                        // backgroundColor: "rgba(90, 170, 200, 0.5)",
+                        yAxisID: 'y-axis-2'
                     }
                 ]
             },
+
             options: {
+                // Show both data values on hover
+                tooltips: {
+                    mode: 'index',
+                    intersect: false
+                },
+                // Changes size based off screen size
                 responsive: true,
+                // Changes aspect ratio to accomodate space
                 maintainAspectRatio: false,
+                // Manually change y axis scale
                 scales: {
-                    yAxes: [
-                        {
+                    yAxes: [{
+                        id: 'y-axis-1',
                         type: 'linear',
                         display: true,
                         position: 'left',
                         ticks: {
+                            // Add space above maximum value
                             max: maxVal + (maxVal/2),
                             min: 0,
-                            callback: function(value) {
-                                return Number(value).toPrecision(3);
+                            callback: function(value, index, values) {
+                            // Format the label to have 2 decimal places
+                            return value.toFixed(2); 
                             }
                         },
+                        // Axis Title
                         scaleLabel: {
                             display: true,
                             color: "rgb(0, 150, 255)"
                         }
-                        },
-                        {
+                    },
+                    {
+                        id: 'y-axis-2',
                         type: 'linear',
                         display: true,
                         position: 'right',
                         ticks: {
-                            max: maxVal + (maxVal/2),
                             min: 0,
+                            max: 20,
                             callback: function(value) {
                                 return Number(value).toPrecision(3);
                             }
                         },
+                        // Axis Title
                         scaleLabel: {
-                            display: true,
-                            color: "rgb(0, 150, 255)"
+                                display: true,
+                                color: "rgb(255, 0, 0)"
                         }
-                        }
-                    ]
+                    }]
                 }
             },
             plugins: [chartAreaBackgroundColor]
