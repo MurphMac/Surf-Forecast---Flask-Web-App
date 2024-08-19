@@ -1,8 +1,22 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 import pandas as pd
 import calendar
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SECRET_KEY'] = 'testkey'
+
+db = SQLAlchemy(app)
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    password = db.Column(db.String(80), nullable=False)
+
+with app.app_context():
+    db.create_all()
 
 # source data
 df_wind = pd.read_csv('data\gfs025_sub_v1.0.csv')
@@ -13,7 +27,7 @@ dates = df_wind['time:Pacific/Auckland']
 
 @app.route('/')
 
-def index():
+def home():
     # Variables for weekdays
     days = []
     for date in dates:
@@ -34,7 +48,17 @@ def index():
     day6=(days[5])[0:3]
     day7=(days[6])[0:3]
 
-    return render_template("index.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7)
+    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7)
+
+@app.route('/login')
+
+def login():
+    return render_template('login.html')
+
+@app.route('/register')
+
+def register():
+    return render_template('register.html')
 
 @app.route('/graph1')
 
@@ -76,6 +100,9 @@ def graphs2():
 
     #return html with data
     return render_template('graph2.html', labels=labels, values1=values1, values2=values2)
+
+with app.app_context():
+    db.create_all()
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Application</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div id="wrapper">
+    <!-- Content from header.html -->
+    <header>{% include 'header.html' %}</header>
+
+    <!-- Main content can be changed -->
+    <main class="box main">{% block content %}{% endblock %}</main>
+
+    <!-- Content from header.html -->
+    <footer>{% include 'footer.html' %}</footer>
+  </div>
+</body>
+</html>

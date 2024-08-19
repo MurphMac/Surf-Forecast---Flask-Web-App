@@ -1,0 +1,43 @@
+{% extends 'layout.html' %} 
+
+{% block content %}
+<div class="dailyinfo">
+    Daily Info
+</div>
+<div class="data days">
+    <span id="day1" class="day1"></span>
+    <span id="day2" class="day2"></span>
+    <span id="day3" class="day3"></span>
+    <span id="day4" class="day4"></span>
+    <span id="day5" class="day5"></span>
+    <span id="day6" class="day6"></span>
+    <span id="day7" class="day7"></span>
+    <script>
+        // Get day values from app.py
+        var day1 = "{{ day1 | safe }}";
+        var day2 = "{{ day2 | safe }}";
+        var day3 = "{{ day3 | safe }}";
+        var day4 = "{{ day4 | safe }}";
+        var day5 = "{{ day5 | safe }}";
+        var day6 = "{{ day6 | safe }}";
+        var day7 = "{{ day7 | safe }}";
+        // Add days to spans
+        document.getElementById("day1").innerHTML = day1;
+        document.getElementById("day2").innerHTML = day2;
+        document.getElementById("day3").innerHTML = day3;
+        document.getElementById("day4").innerHTML = day4;
+        document.getElementById("day5").innerHTML = day5;
+        document.getElementById("day6").innerHTML = day6;
+        document.getElementById("day7").innerHTML = day7;
+    </script>
+</div>
+<div class="data graph1">
+    <iframe src="/graph1" scrolling="no"></iframe>
+</div>
+<div class="data graph2">
+    <iframe src="/graph2" scrolling="no"></iframe>
+</div>
+<div class="graph3">
+    Graph 3
+</div>
+{% endblock %}

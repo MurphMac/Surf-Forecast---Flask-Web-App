@@ -5,9 +5,9 @@ body {
 .wrapper {
     display: grid;
     grid-template-columns: 20% 20% 60%;
-    grid-template-rows: 10vh 75vh 15vh;
+    grid-template-rows: 10% 75% 15%;
     grid-template-areas: 
-    "logo banner nav"
+    "header header nav"
     "main main main"
     "footer footer footer";
 }
@@ -18,12 +18,8 @@ body {
     text-align: center;
 }
 
-.logo { 
-    grid-area: logo;
-}
-
-.banner { 
-    grid-area: banner;
+.header { 
+    grid-area: header;
 }
 
 .nav {
@@ -38,6 +34,15 @@ body {
     grid-area: footer;
 }
 
+.nav > button {
+    color: red;
+}
+
+.dailyinfo {
+    height: 30vh;
+    background-color: white;
+}
+
 .graph1, .graph2, .graph3 {
     position: relative;
     height: 40vh;
@@ -49,11 +54,13 @@ body {
     width: 100%;
     height: 40vh;
     border: none;
+    background-color: white;
 }
 
 .data {
     width: 100%;
     border: none;
+    background-color: white;
 }
 
 .data.days {
@@ -61,7 +68,6 @@ body {
     justify-content: space-around; 
     width: calc(100% - 125px);
     margin: auto;
-    background-color: red;
 }
 
 .days > span {
