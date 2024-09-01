@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #lineChart {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <canvas id="lineChart"></canvas>
+    </div>
+    <script>
+        var ctx = document.getElementById("lineChart").getContext("2d");
+
+        // Change background colour to grey and white to show days
+        var chartAreaBackgroundColor = {
+            id: "chartAreaBackgroundColor",
+            beforeDraw: function(chart) {
+                var ctx = chart.chart.ctx;
+                var chartArea = chart.chartArea;
+                // Split chart into 7 areas (horizontally)
+                var firstSeventh = chartArea.left + (chartArea.right - chartArea.left) * (24/168);
+                var secondSeventh = chartArea.left + (chartArea.right - chartArea.left) * (2*24/168);
+                var thirdSeventh = chartArea.left + (chartArea.right - chartArea.left) * (3*24/168);
+                var fourthSeventh = chartArea.left + (chartArea.right - chartArea.left) * (4*24/168);
+                var fifthSeventh = chartArea.left + (chartArea.right - chartArea.left) * (5*24/168);
+                var sixthSeventh = chartArea.left + (chartArea.right - chartArea.left) * (6*24/168);
+
+                ctx.save();
+                ctx.fillStyle = 'rgba(200, 200, 200, 0.5)';
+                // Fill 4/7 with darker shade
+                ctx.fillRect(chartArea.left, chartArea.top, firstSeventh - chartArea.left, chartArea.bottom - chartArea.top);
+                ctx.fillRect(secondSeventh, chartArea.top, thirdSeventh - secondSeventh, chartArea.bottom - chartArea.top);
+                ctx.fillRect(fourthSeventh, chartArea.top, fifthSeventh - fourthSeventh, chartArea.bottom - chartArea.top);
+                ctx.fillRect(sixthSeventh, chartArea.top, chartArea.right - sixthSeventh, chartArea.bottom - chartArea.top);
+                ctx.restore();
+            }
+        };
+
+        // Variable for data values
+        var values1 = {{ values1 | safe }};
+        // Find maximum of individual elements in array
+        var maxVal = Math.max(...values1);
+
+        // Make chart
+        var lineChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: {{ labels | safe }},
+                datasets: [
+                    {
+                        label: "Tide height (m)",
+                        data: {{ values1 | safe }},
+                        fill: false,
+                        borderColor: "rgb(0, 0, 255)",
+                        borderWidth: 5,
+                        lineTension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 0,
+                        backgroundColor: "rgba(90, 170, 200, 0.5)",
+                    }
+                ]
+            },
+            options: {
+                // Show both values on hover
+                tooltips: {
+                    mode: 'index',
+                    intersect: false
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [
+                        {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: {
+                                max: maxVal + (maxVal/5),
+                                min: 0,
+                                callback: function(value) {
+                                    return value.toFixed(2).padStart(4, '0');
+                                }
+                            },
+                            scaleLabel: {
+                                display: true,
+                                color: "rgb(0, 150, 255)"
+                            }
+                        },
+                        {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            ticks: {
+                                max: maxVal + (maxVal/5),
+                                min: 0,
+                                callback: function(value) {
+                                    return value.toFixed(2).padStart(4, '0');
+                                }
+                            },
+                            scaleLabel: {
+                                display: true,
+                                color: "rgb(0, 150, 255)"
+                            }
+                        }
+                    ],
+                    xAxes: [{
+                            ticks: {
+                                display: false
+                            }   
+                    }]
+                }
+            },
+            plugins: [chartAreaBackgroundColor]
+        });
+    </script>
+</body>
+</html>

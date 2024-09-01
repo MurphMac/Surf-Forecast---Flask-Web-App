@@ -8,15 +8,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <div id="wrapper">
+  <div class="wrapper">
     <!-- Content from header.html -->
-    <header>{% include 'header.html' %}</header>
+    <header class="box banner">{% include 'banner.html' %}</header>
+
+    <!-- Content from nav.html -->
+    <nav class="box nav">{% include 'nav.html' %}</nav>
 
     <!-- Main content can be changed -->
     <main class="box main">{% block content %}{% endblock %}</main>
 
     <!-- Content from header.html -->
-    <footer>{% include 'footer.html' %}</footer>
+    <footer class="box footer">{% include 'footer.html' %}</footer>
   </div>
 </body>
 </html>

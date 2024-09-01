@@ -1,9 +1,6 @@
 {% extends 'layout.html' %} 
 
 {% block content %}
-<div class="dailyinfo">
-    Daily Info
-</div>
 <div class="data days">
     <span id="day1" class="day1"></span>
     <span id="day2" class="day2"></span>
@@ -37,7 +34,16 @@
 <div class="data graph2">
     <iframe src="/graph2" scrolling="no"></iframe>
 </div>
-<div class="graph3">
-    Graph 3
+<div class="data graph3">
+    <iframe src="/graph3" scrolling="no"></iframe>
+</div>
+<div class="dailyinfo">
+    <ul>
+        <li>Swell</li>
+        <li>Wind</li>
+        <li>Wind type</li>
+        <li>Tide</li>
+        <li>Surf Rating</li>
+    </ul>
 </div>
 {% endblock %}

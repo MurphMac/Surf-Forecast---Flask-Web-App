@@ -4,12 +4,12 @@ body {
 
 .wrapper {
     display: grid;
-    grid-template-columns: 20% 20% 60%;
-    grid-template-rows: 10% 75% 15%;
+    grid-template-columns: 40% 60%;
+    grid-template-rows: 10vh 140vh 15vh;
     grid-template-areas: 
-    "header header nav"
-    "main main main"
-    "footer footer footer";
+    "banner nav"
+    "main main"
+    "footer footer";
 }
 
 .box {
@@ -18,8 +18,8 @@ body {
     text-align: center;
 }
 
-.header { 
-    grid-area: header;
+.banner { 
+    grid-area: banner;
 }
 
 .nav {
@@ -28,39 +28,49 @@ body {
 
 .main {
     grid-area: main;
+    background-color: white;
 }
 
 .footer {
     grid-area: footer;
 }
 
-.nav > button {
-    color: red;
+.button {
+    background-color: white;
+    text-decoration: none;
+    color: black;
+    padding: 1%;
 }
 
 .dailyinfo {
-    height: 30vh;
-    background-color: white;
+    height: 15vh;
+    vertical-align: center;
 }
 
-.graph1, .graph2, .graph3 {
-    position: relative;
-    height: 40vh;
-    width: 100%;
-    background-color: white;
+.dailyinfo > ul {
+    margin: auto;
+    height: 15vh;
+    background-color: lightblue;
+    padding: 0;
 }
 
-.graph2 > iframe, .graph1 > iframe {
-    width: 100%;
+.dailyinfo > ul > li {
+    display: inline-block;
+    width: 20%;
+    background-color: red;
+    margin-left: -0.15%;
+    margin-right: -0.15%;
+}
+
+iframe {
     height: 40vh;
+    width: 100%;
     border: none;
-    background-color: white;
+    position: relative;
 }
 
 .data {
-    width: 100%;
     border: none;
-    background-color: white;
 }
 
 .data.days {
@@ -73,7 +83,6 @@ body {
 .days > span {
     flex: 1; 
     text-align: center;
-    background-color: white;
     font-size: 13px; 
     padding: 5px;  
 }
@@ -82,10 +91,16 @@ body {
     .days > span {
         font-size: 8px;
     }
+    .data {
+        width: 80%
+    }
 }
 
 @media (min-aspect-ratio: 1/1) {
     .days > span {
         font-size: 13px;
+    }
+    .data {
+        width: 100%
     }
 }
