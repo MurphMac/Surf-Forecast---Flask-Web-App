@@ -1,10 +1,11 @@
 from flask import Flask, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
+#from flask_login import UserMixin
 import pandas as pd
 from datetime import datetime, timedelta
 import calendar
 import sqlite3
+import insertdata
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -12,38 +13,22 @@ app.config['SECRET_KEY'] = 'testkey'
 
 db = SQLAlchemy(app)
 
-# source data
-df_tide = pd.read_csv(r'data\results.csv', header=7)
-
-# Create a list of tuples containing time and tide height
-tide_data = list(zip(df_tide['TIME'], df_tide['VALUE']))
-
-dates = [row[0] for row in tide_data]
-
-# Convert dates into correct format and order
-for i in range(len(dates)):
-    #Convert to datetime object
-    dt = datetime.strptime(dates[i], "%Y-%m-%dT%H:%M:%SZ")
-    #Subtract 12 hours
-    dt -= timedelta(hours=12)
-    #Convert back to string
-    dates[i] = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-
-conn = sqlite3.connect('database.db')
-cursor = conn.cursor()
-
-# Clear table
-cursor.execute("DELETE FROM time")
-
-for date in dates:
-    cursor.execute("INSERT INTO time (date_time) VALUES (?)", (date,))
-
-conn.commit()
-conn.close()
+insertdata.sourcedata()
 
 @app.route('/')
 
 def home():
+    #Open database
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    #Get dates and times
+    cursor.execute('''SELECT date_time FROM time''')
+    data = cursor.fetchall()
+    #Make into list
+    dates = [row[0] for row in data]
+    conn.close()
+
     # Variables for weekdays
     days = []
     for date in dates:
@@ -83,25 +68,30 @@ def register():
 @app.route('/graph1')
 
 def graphs1():
-    # source data
-    df_wind = pd.read_csv(r'data\gfs025_sub_v1.0.csv')
-    #Drop last 12 rows
-    df_wind.drop(index=df_wind.index[-12:], axis=0, inplace=True)
-    #Get dates
-    dates = df_wind['time:Pacific/Auckland']
+    #Open database
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
 
-    #Get Wind speed
-    values1 = list(round(x, 2) for x in df_wind['wind_speed_at_10m_above_ground_level:kt'])
-    #Get Gust speed
-    values2 = list(round(x, 2) for x in df_wind['wind_speed_of_gust_at_10m_above_ground_level:kt'])
+    #Execute query and fetch all data
+    cursor.execute('''
+        SELECT w.wind_speed, w.gust_speed, w.wind_direction, t.date_time
+        FROM wind w
+        JOIN time t ON t.time_id = w.time_id
+        JOIN location l ON w.location_id = l.location_id
+        WHERE l.location_id = 5
+    ''')
 
-    #Get Labels
-    labels = []
-    #dates = df_wind['time:Pacific/Auckland']
-    for times in dates:
-        labels.append(times[11:16])
+    data = cursor.fetchall()
+    conn.close()
+
+    # Extract values
+    values1 = [row[0] for row in data]
+    values2 = [row[1] for row in data]
+    labels = [row[3][11:16] for row in data]
 
     return render_template('graph1.html', labels=labels, values1=values1, values2=values2)
+
+"""
 
 @app.route('/graph2')
 
@@ -138,6 +128,8 @@ def graphs3():
         labels.append(times[11:16])
 
     return render_template('graph3.html', labels=labels, values1=values1)
+
+"""
 
 if __name__ == "__main__":
     app.run(debug=True)
