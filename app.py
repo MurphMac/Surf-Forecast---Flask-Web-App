@@ -84,35 +84,36 @@ def graphs1():
     data = cursor.fetchall()
     conn.close()
 
-    # Extract values
+    #Extract values
     values1 = [row[0] for row in data]
     values2 = [row[1] for row in data]
     labels = [row[3][11:16] for row in data]
 
     return render_template('graph1.html', labels=labels, values1=values1, values2=values2)
 
-"""
-
 @app.route('/graph2')
 
 def graphs2():
-    # source data
-    df_swell = pd.read_csv(r'data\swan_gfs_nz-ncanterb_v3.0_rb70bv50.csv')
-    #Drop last 12 rows
-    df_swell.drop(index=df_swell.index[-12:], axis=0, inplace=True)
+    #Open database
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
 
-    # Create a list of tuples containing time and swell size
-    swell_data = list(zip(df_swell['time:Pacific/Auckland'], df_swell['hs:m']))
-    # List of wave period data
-    values2 = list(df_swell['tp:s'])
+    #Execute query and fetch all data
+    cursor.execute('''
+        SELECT w.swell_size,swell_period,t.date_time 
+        FROM waves w
+        JOIN time t ON t.time_id = w.time_id
+        JOIN location l ON w.location_id = l.location_id
+        WHERE l.location_id = 5
+    ''')
 
-    dates = [row[0] for row in swell_data]
-    values1 = [row[1] for row in swell_data]
-    labels = []
+    data = cursor.fetchall()
+    conn.close()
 
-    for times in dates:
-        #Add only time of day to labels
-        labels.append(times[11:16])
+    #Extract values
+    values1 = [row[0] for row in data]
+    values2 = [row[1] for row in data]
+    labels = [row[2][11:16] for row in data]
 
     #return html with data
     return render_template('graph2.html', labels=labels, values1=values1, values2=values2)
@@ -120,17 +121,27 @@ def graphs2():
 @app.route('/graph3')
 
 def graphs3():
-    values1 = [row[1] for row in tide_data]
-    labels = []
+    #Open database
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
 
-    for times in dates:
-        #Add only time of day to labels
-        labels.append(times[11:16])
+    #Execute query and fetch all data
+    cursor.execute('''
+        SELECT tide.tide_height,t.date_time 
+        FROM tide 
+        JOIN time t ON t.time_id = tide.time_id
+        JOIN location l ON tide.location_id = l.location_id
+        WHERE l.location_id = 5
+    ''')
+
+    data = cursor.fetchall()
+    conn.close()
+
+    #Extract values
+    values1 = [row[0] for row in data]
+    labels = [row[1][11:16] for row in data]
 
     return render_template('graph3.html', labels=labels, values1=values1)
 
-"""
-
 if __name__ == "__main__":
     app.run(debug=True)
-
