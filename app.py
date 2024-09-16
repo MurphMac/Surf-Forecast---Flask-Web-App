@@ -13,9 +13,11 @@ app.config['SECRET_KEY'] = 'testkey'
 
 db = SQLAlchemy(app)
 
+location_id = None
+
 insertdata.sourcedata()
 
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 
 def home():
     #Open database
@@ -43,7 +45,6 @@ def home():
         #Remove duplicates
         days = list(dict.fromkeys(days))
 
-
     #Assign value to each day on the graph
     day1=(days[0])
     day2=(days[1])
@@ -52,6 +53,19 @@ def home():
     day5=(days[4])
     day6=(days[5])
     day7=(days[6])
+
+    global location_id
+
+    #Get variale from drop down box
+    location_name = request.form.get('location')
+
+    locations_dictionary = {
+        "christchurch": 5,
+        "tauranga": 1
+    }
+
+    #Get corresponding ID
+    location_id = locations_dictionary.get(location_name)
 
     return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7)
 
@@ -65,20 +79,12 @@ def login():
 def register():
     return render_template('register.html')
 
-@app.route('/graph1', methods = ['GET', 'POST'])
+@app.route('/graph1')
 def graphs1():
 
-    #Get variale from drop down box
-    location_name = request.form.get('location')
-
-    locations_dictionary = {
-        "christchurch": 5,
-        "tauranga": 1
-    }
-
-    #Get corresponding ID
-    location_id = locations_dictionary.get(location_name)
-
+    #Access location_id
+    global location_id
+    
     # Open database
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -105,6 +111,10 @@ def graphs1():
 @app.route('/graph2')
 
 def graphs2():
+
+    #Access location_id
+    global location_id
+
     #Open database
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -115,8 +125,8 @@ def graphs2():
         FROM waves w
         JOIN time t ON t.time_id = w.time_id
         JOIN location l ON w.location_id = l.location_id
-        WHERE l.location_id = 5
-    ''')
+        WHERE l.location_id = ?
+    ''', (location_id,))
 
     data = cursor.fetchall()
     conn.close()
@@ -132,6 +142,10 @@ def graphs2():
 @app.route('/graph3')
 
 def graphs3():
+
+    #Access location_id
+    global location_id
+
     #Open database
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -142,8 +156,8 @@ def graphs3():
         FROM tide 
         JOIN time t ON t.time_id = tide.time_id
         JOIN location l ON tide.location_id = l.location_id
-        WHERE l.location_id = 5
-    ''')
+        WHERE l.location_id = ?
+    ''', (location_id,))
 
     data = cursor.fetchall()
     conn.close()
