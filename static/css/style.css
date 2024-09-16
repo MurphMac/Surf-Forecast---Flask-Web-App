@@ -1,29 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 body {
     margin: auto;
+    overflow-x: hidden;
+    font-family: 'Barlow Condensed';
 }
 
 .wrapper {
+    margin: auto;
+    width: 100vw;
     display: grid;
-    grid-template-columns: 40% 60%;
-    grid-template-rows: 10vh 140vh 15vh;
-    grid-template-areas: 
-    "banner nav"
-    "main main"
-    "footer footer";
 }
 
-.box {
-    background-color: grey;
-    border: solid 1px black;
-    text-align: center;
+@media (max-aspect-ratio: 1/1) {
+    .days > span {
+        font-size: 8px;
+    }
+    .data {
+        width: 80%
+    }
+    .wrapper {
+        grid-template-columns: 60% 40%;
+        grid-template-rows: 12vh 20vh 128vh 15vh;
+        grid-template-areas: 
+        "banner nav"
+        "sidebar sidebar"
+        "main main"
+        "footer footer";
+    }
+}
+
+@media (min-aspect-ratio: 1/1) {
+    .days > span {
+        font-size: 13px;
+    }
+    .data {
+        width: 100%
+    }
+    .wrapper {
+        grid-template-columns: 60% 20% 20%;
+        grid-template-rows: 12vh 126vh 15vh;
+        grid-template-areas: 
+        "banner nav nav"
+        "main main sidebar"
+        "footer footer footer";
+    }
 }
 
 .banner { 
     grid-area: banner;
+    background-color: #2d93e0;
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    margin-left: 5%;
+    height: 75%;
+    width: auto;
 }
 
 .nav {
     grid-area: nav;
+    background-color: #2d93e0;
+    display: flex;
+    align-items: center;
 }
 
 .main {
@@ -31,15 +72,39 @@ body {
     background-color: white;
 }
 
+.sidebar {
+    grid-area: sidebar;
+    background-color: #a3daff;
+}
+
 .footer {
     grid-area: footer;
+    background-color: #2d93e0;
+    display: flex;
+    align-items: center;
+}
+
+.buttons {
+    display: inline-flex;
+    list-style-type: none;
+    width: 100%;
 }
 
 .button {
-    background-color: white;
+    background-color: #ff8aad;
     text-decoration: none;
     color: black;
-    padding: 1%;
+    margin: auto;
+    padding: 0 3%;
+    border-radius: 3px;
+    border: solid 4px #ff0c55;
+    font-weight: 600;
+    font-size: clamp(12px, 2vw, 24px);
+    height: 40%;
+}
+
+.button:hover {
+    background-color: #ffe45e;
 }
 
 .dailyinfo {
@@ -71,6 +136,9 @@ iframe {
 
 .data {
     border: none;
+    width: 100%;
+    margin: 0;
+    padding: 0; 
 }
 
 .data.days {
@@ -78,6 +146,8 @@ iframe {
     justify-content: space-around; 
     width: calc(100% - 125px);
     margin: auto;
+    font-weight: 500;
+    background-color:#ffe45e;
 }
 
 .days > span {
@@ -85,22 +155,4 @@ iframe {
     text-align: center;
     font-size: 13px; 
     padding: 5px;  
-}
-
-@media (max-aspect-ratio: 1/1) {
-    .days > span {
-        font-size: 8px;
-    }
-    .data {
-        width: 80%
-    }
-}
-
-@media (min-aspect-ratio: 1/1) {
-    .days > span {
-        font-size: 13px;
-    }
-    .data {
-        width: 100%
-    }
 }

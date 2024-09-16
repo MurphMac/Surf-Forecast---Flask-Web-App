@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 #from flask_login import UserMixin
 import pandas as pd
@@ -65,26 +65,37 @@ def login():
 def register():
     return render_template('register.html')
 
-@app.route('/graph1')
-
+@app.route('/graph1', methods = ['GET', 'POST'])
 def graphs1():
-    #Open database
+
+    #Get variale from drop down box
+    location_name = request.form.get('location')
+
+    locations_dictionary = {
+        "christchurch": 5,
+        "tauranga": 1
+    }
+
+    #Get corresponding ID
+    location_id = locations_dictionary.get(location_name)
+
+    # Open database
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    #Execute query and fetch all data
+    # Execute query and fetch all data
     cursor.execute('''
         SELECT w.wind_speed, w.gust_speed, w.wind_direction, t.date_time
         FROM wind w
         JOIN time t ON t.time_id = w.time_id
         JOIN location l ON w.location_id = l.location_id
-        WHERE l.location_id = 5
-    ''')
+        WHERE l.location_id = ?
+    ''', (location_id,))
 
     data = cursor.fetchall()
     conn.close()
 
-    #Extract values
+    # Extract values
     values1 = [row[0] for row in data]
     values2 = [row[1] for row in data]
     labels = [row[3][11:16] for row in data]

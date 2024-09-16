@@ -1,6 +1,25 @@
 {% extends 'layout.html' %} 
 
-{% block content %}
+{% block main_content %}
+
+<!--<label for="locations">Select Location:</label>
+<select name="locations" id="locations">
+  <option value="christchurch">Christchurch</option>
+  <option value="raglan">Raglan</option>
+</select>
+
+<div id="output"></div>-->
+
+<form action="/graph1" method="POST">
+    <label for="locations">Select Location:</label>
+    <select name="location" id="locations">
+        <option value="christchurch">Christchurch</option>
+        <option value="tauranga">Tauranga</option>
+    </select>
+    <button type="submit">Submit</button>
+</form>
+
+
 <div class="data days">
     <span id="day1" class="day1"></span>
     <span id="day2" class="day2"></span>
@@ -28,6 +47,7 @@
         document.getElementById("day7").innerHTML = day7;
     </script>
 </div>
+
 <div class="data graph1">
     <iframe src="/graph1" scrolling="no"></iframe>
 </div>
@@ -37,13 +57,5 @@
 <div class="data graph3">
     <iframe src="/graph3" scrolling="no"></iframe>
 </div>
-<div class="dailyinfo">
-    <ul>
-        <li>Swell</li>
-        <li>Wind</li>
-        <li>Wind type</li>
-        <li>Tide</li>
-        <li>Surf Rating</li>
-    </ul>
-</div>
+
 {% endblock %}

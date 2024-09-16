@@ -16,7 +16,22 @@
     <nav class="box nav">{% include 'nav.html' %}</nav>
 
     <!-- Main content can be changed -->
-    <main class="box main">{% block content %}{% endblock %}</main>
+    <main class="box main">{% block main_content %}{% endblock %}</main>
+
+    <!-- Side content can be changed -->
+    <!--<div class="box sidebar">{% block side_content %}{% endblock %}</div>-->
+
+    <div class="box sidebar">
+      <div class="dailyinfo">
+        <ul>
+            <li>Swell</li>
+            <li>Wind</li>
+            <li>Wind type</li>
+            <li>Tide</li>
+            <li>Surf Rating</li>
+        </ul>
+      </div>
+    </div>
 
     <!-- Content from header.html -->
     <footer class="box footer">{% include 'footer.html' %}</footer>

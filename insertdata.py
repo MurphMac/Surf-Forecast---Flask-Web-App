@@ -4,17 +4,17 @@ import sqlite3
 
 def sourcedata():
     # source tide data
-    df_tide = pd.read_csv(r'data\results.csv', header=7)
+    df_tide = pd.read_csv(r'data\CHR_results.csv', header=7)
     # Create a list of tuples containing time and tide height
     tide_data = list(zip(df_tide['TIME'], df_tide['VALUE']))
 
     # source wind data
-    df_wind = pd.read_csv(r'data\gfs025_sub_v1.0.csv')
+    df_wind = pd.read_csv(r'data\CHR_gfs025_sub_v1.0.csv')
     #Drop last 12 rows
     df_wind.drop(index=df_wind.index[-12:], axis=0, inplace=True)
 
     # source data
-    df_swell = pd.read_csv(r'data\swan_gfs_nz-ncanterb_v3.0_rb70bv50.csv')
+    df_swell = pd.read_csv(r'data\CHR_swan_gfs_nz-ncanterb_v3.0_rb70bv50.csv')
     #Drop last 12 rows
     df_swell.drop(index=df_swell.index[-12:], axis=0, inplace=True)
 
@@ -55,6 +55,31 @@ def sourcedata():
     for value in wind_values:
         cursor.execute("INSERT INTO wind (location_id, wind_speed, gust_speed, wind_direction, time_id) VALUES (?, ?, ?, ?, ?)", (5, value[0], value[1], value[2], time_id))
         time_id = time_id+3
+
+
+
+
+    df_wind = pd.read_csv(r'data\TAU_gfs025_sub_v1.0.csv')
+
+    #Get Wind speed
+    wind_speed = list(round(x, 2) for x in df_wind['wind_speed_at_10m_above_ground_level:kt'])
+    #Get Gust speed
+    gust_speed = list(round(x, 2) for x in df_wind['wind_speed_of_gust_at_10m_above_ground_level:kt'])
+    #Get Wind direction
+    wind_direction = list(df_wind['wind_from_direction_at_10m_above_ground_level:deg'])
+
+    wind_values = list(zip(wind_speed, gust_speed, wind_direction))
+
+    #Insert into wind table
+    time_id = 1
+    for value in wind_values:
+        cursor.execute("INSERT INTO wind (location_id, wind_speed, gust_speed, wind_direction, time_id) VALUES (?, ?, ?, ?, ?)", (1, value[0], value[1], value[2], time_id))
+        time_id = time_id+3
+
+
+
+
+
 
     # Create a list of tuples containing time and swell size
     swell_size = list(round(x, 2) for x in df_swell['hs:m'])
