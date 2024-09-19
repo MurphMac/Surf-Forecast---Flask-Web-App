@@ -1,11 +1,11 @@
 from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
-#from flask_login import UserMixin
 import pandas as pd
 from datetime import datetime, timedelta
 import calendar
 import sqlite3
 import insertdata
+from form import RegistrationForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -14,6 +14,8 @@ app.config['SECRET_KEY'] = 'testkey'
 db = SQLAlchemy(app)
 
 location_id = None
+logged_in = False
+account_name = "Login"
 
 insertdata.sourcedata()
 
@@ -67,17 +69,71 @@ def home():
     #Get corresponding ID
     location_id = locations_dictionary.get(location_name)
 
-    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7)
+    global logged_in
+    global account_name
 
-@app.route('/login')
+    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in, account_name=account_name)
+
+@app.route('/login', methods = ['GET', 'POST'])
 
 def login():
-    return render_template('login.html')
+    global account_name
+    global logged_in
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM user WHERE username='{username}' AND password='{password}';")
+        if not cursor.fetchone():
+            return render_template('login.html')
+        else:
+            account_name = "Account - "+username
+            logged_in = True
+            return render_template('account.html', username=username)
 
-@app.route('/register')
+    else:
+        request.method == 'GET'
+        return render_template('login.html')
+
+@app.route('/register', methods = ['GET', 'POST'])
 
 def register():
-    return render_template('register.html')
+    #Run registration form from form.py
+    registrationForm = RegistrationForm()
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    if request.method == 'POST':
+        #If username and password is not null
+        if (request.form['username'] != "" and request.form['password'] != ""):
+            username = request.form['username']
+            password = request.form['password']
+            skill = request.form['skill']
+            cursor.execute(f"SELECT * FROM user WHERE username='{username}' AND password='{password}';")
+            data = cursor.fetchone()
+            #Check if it matches other in db
+            if data:
+                return render_template("error.html")
+            else:
+                if not data:
+                    #Insert into db
+                    cursor.execute("INSERT INTO user (username, password, skill) VALUES (?,?,?)", (username, password, skill))
+                    conn.commit()
+                    conn.close()
+                return render_template('login.html')
+
+    elif request.method == 'GET':
+        return render_template('register.html', form=registrationForm)
+
+@app.route('/account')
+
+def account():
+    global account_name
+    # Ensure logged_in is available
+    global logged_in
+    if not logged_in:
+        return render_template('login.html')
+    return render_template('account.html', account_name=account_name)
 
 @app.route('/graph1')
 def graphs1():

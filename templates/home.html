@@ -2,23 +2,23 @@
 
 {% block main_content %}
 
-<!--<label for="locations">Select Location:</label>
-<select name="locations" id="locations">
-  <option value="christchurch">Christchurch</option>
-  <option value="raglan">Raglan</option>
-</select>
+<div class="location_selection">
+    <form action="/" method="POST">
+        <label for="locations">Select Location:</label>
+        <select name="location" id="locations">
+            <option value="christchurch">Christchurch</option>
+            <option value="tauranga">Tauranga</option>
+        </select>
+        <button class="button" type="submit">Refresh</button>
+    </form>
 
-<div id="output"></div>-->
-
-<form action="/" method="POST">
-    <label for="locations">Select Location:</label>
-    <select name="location" id="locations">
-        <option value="christchurch">Christchurch</option>
-        <option value="tauranga">Tauranga</option>
-    </select>
-    <button type="submit">Submit</button>
-</form>
-
+    <h1 id="location_name" class="location_name"></h1>
+    <script>
+        // Get location values from app.py
+        var location_name = "{{ location_name | safe }}";
+        document.getElementById("location_name").innerHTML = location_name;
+    </script>
+</div>
 
 <div class="data days">
     <span id="day1" class="day1"></span>

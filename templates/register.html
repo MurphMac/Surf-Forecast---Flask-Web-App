@@ -2,5 +2,32 @@
 
 {% block main_content %}
 <h1>Register Page</h1>
+
+<form action="/register" method="POST">
+
+    {{ form.hidden_tag() }}
+
+    <div class="table-selection">
+        <table>
+            <tr>
+                <td>{{form.username.label}}</td>
+                <td>{{form.username}}</td>
+            </tr>
+            <tr>
+                <td>{{form.password.label}}</td>
+                <td>{{form.password}}</td>
+            </tr>
+            <tr>
+                <td>{{form.skill.label}}</td>
+                <td>{{form.skill}}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>{{form.submit(class="anchor-button")}}</td>
+            </tr>
+        </table>
+    </div>
+</form>
+
 <a href="{{url_for('login')}}">Already have an account? Login</a>
 {% endblock %}

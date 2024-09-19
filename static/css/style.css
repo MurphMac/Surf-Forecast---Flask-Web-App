@@ -21,7 +21,7 @@ body {
     }
     .wrapper {
         grid-template-columns: 60% 40%;
-        grid-template-rows: 12vh 20vh 128vh 15vh;
+        grid-template-rows: 12vh 20vh 150vh 15vh;
         grid-template-areas: 
         "banner nav"
         "sidebar sidebar"
@@ -39,7 +39,7 @@ body {
     }
     .wrapper {
         grid-template-columns: 60% 20% 20%;
-        grid-template-rows: 12vh 126vh 15vh;
+        grid-template-rows: 12vh 150vh 15vh;
         grid-template-areas: 
         "banner nav nav"
         "main main sidebar"
@@ -47,11 +47,16 @@ body {
     }
 }
 
+.box {
+    border: 1px solid black;
+}
+
 .banner { 
     grid-area: banner;
     background-color: #2d93e0;
     display: flex;
     align-items: center;
+    border: none;
 }
 
 .logo {
@@ -65,6 +70,7 @@ body {
     background-color: #2d93e0;
     display: flex;
     align-items: center;
+    border: none;
 }
 
 .main {
@@ -105,6 +111,29 @@ body {
 
 .button:hover {
     background-color: #ffe45e;
+}
+
+.location_selection {
+    text-align: center;
+    background-color: #ffe45e;
+}
+
+.location_selection > form {
+    padding: 1%;
+    scale: 1.5;
+}
+
+.location_selection > form > button {
+    scale: 0.6;
+    margin: 0;
+}
+
+.location_selection > form > button:hover {
+    background-color: #2d93e0;
+}
+
+.location_selection > h1 {
+    padding: 1%;
 }
 
 .dailyinfo {
