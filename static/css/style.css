@@ -28,6 +28,15 @@ body {
         "main main"
         "footer footer";
     }
+
+    .dailyinfo > ul > li {
+        display: inline-block;
+        background-color: red;
+        text-align: left;
+        height: 10vh;
+        width: 14vw;
+        margin-left: 1vw;
+    }
 }
 
 @media (min-aspect-ratio: 1/1) {
@@ -44,6 +53,12 @@ body {
         "banner nav nav"
         "main main sidebar"
         "footer footer footer";
+    }
+
+    .dailyinfo > ul > li {
+        display: block;
+        text-align: left;
+        height: 25vh;
     }
 }
 
@@ -71,6 +86,7 @@ body {
     display: flex;
     align-items: center;
     border: none;
+    justify-content: flex-end;
 }
 
 .main {
@@ -80,7 +96,7 @@ body {
 
 .sidebar {
     grid-area: sidebar;
-    background-color: #a3daff;
+    background-color: #ffe45e;
 }
 
 .footer {
@@ -91,9 +107,16 @@ body {
 }
 
 .buttons {
+    width: 100%;
     display: inline-flex;
     list-style-type: none;
-    width: 100%;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+}
+
+.buttons > li {
+    flex: 1;
 }
 
 .button {
@@ -105,8 +128,7 @@ body {
     border-radius: 3px;
     border: solid 4px #ff0c55;
     font-weight: 600;
-    font-size: clamp(12px, 2vw, 24px);
-    height: 40%;
+    font-size: clamp(8px, 2vw, 24px);
 }
 
 .button:hover {
@@ -115,7 +137,7 @@ body {
 
 .location_selection {
     text-align: center;
-    background-color: #ffe45e;
+    background-color: #a3daff;
 }
 
 .location_selection > form {
@@ -137,23 +159,15 @@ body {
 }
 
 .dailyinfo {
-    height: 15vh;
     vertical-align: center;
+    width: 90%;
 }
 
 .dailyinfo > ul {
     margin: auto;
-    height: 15vh;
-    background-color: lightblue;
+    background-color: #ffe45e;
     padding: 0;
-}
-
-.dailyinfo > ul > li {
-    display: inline-block;
-    width: 20%;
-    background-color: red;
-    margin-left: -0.15%;
-    margin-right: -0.15%;
+    margin-left: 10%;
 }
 
 iframe {
@@ -176,7 +190,7 @@ iframe {
     width: calc(100% - 125px);
     margin: auto;
     font-weight: 500;
-    background-color:#ffe45e;
+    background-color: #a3daff;
 }
 
 .days > span {

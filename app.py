@@ -15,7 +15,7 @@ db = SQLAlchemy(app)
 
 location_id = None
 logged_in = False
-account_name = "Login"
+account_name = ""
 
 insertdata.sourcedata()
 
@@ -70,15 +70,14 @@ def home():
     location_id = locations_dictionary.get(location_name)
 
     global logged_in
-    global account_name
 
-    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in, account_name=account_name)
+    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in)
 
 @app.route('/login', methods = ['GET', 'POST'])
 
 def login():
-    global account_name
     global logged_in
+    global account_name
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -88,9 +87,9 @@ def login():
         if not cursor.fetchone():
             return render_template('login.html')
         else:
-            account_name = "Account - "+username
             logged_in = True
-            return render_template('account.html', username=username)
+            account_name = username
+            return render_template('account.html', account_name=account_name)
 
     else:
         request.method == 'GET'
@@ -128,9 +127,9 @@ def register():
 @app.route('/account')
 
 def account():
-    global account_name
     # Ensure logged_in is available
     global logged_in
+    global account_name
     if not logged_in:
         return render_template('login.html')
     return render_template('account.html', account_name=account_name)
