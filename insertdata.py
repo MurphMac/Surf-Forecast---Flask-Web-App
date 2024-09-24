@@ -72,13 +72,13 @@ def sourcedata():
     conn.commit()
 
     # Process all data
-    process_tide_data(cursor, r'data\CHR_results.csv', location_id=5)
-    process_wind_data(cursor, r'data\CHR_gfs025_sub_v1.0.csv', location_id=5)
-    process_swell_data(cursor, r'data\CHR_swan_gfs_nz-ncanterb_v3.0_rb70bv50.csv', location_id=5)
+    process_tide_data(cursor, r'data/CHR_results.csv', location_id=5)
+    process_wind_data(cursor, r'data/CHR_gfs025_sub_v1.0.csv', location_id=5)
+    process_swell_data(cursor, r'data/CHR_swan_gfs_nz-ncanterb_v3.0_rb70bv50.csv', location_id=5)
 
-    process_tide_data(cursor, r'data\TAU_results.csv', location_id=1)
-    process_wind_data(cursor, r'data\TAU_gfs025_sub_v1.0.csv', location_id=1)
-    process_swell_data(cursor, r'data\TAU_swan_gfs_nz-bop_v3.0_rcm61szc.csv', location_id=1)
+    process_tide_data(cursor, r'data/TAU_results.csv', location_id=1)
+    process_wind_data(cursor, r'data/TAU_gfs025_sub_v1.0.csv', location_id=1)
+    process_swell_data(cursor, r'data/TAU_swan_gfs_nz-bop_v3.0_rcm61szc.csv', location_id=1)
 
     conn.commit()
     conn.close()
