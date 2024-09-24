@@ -223,5 +223,8 @@ def graphs3():
 
     return render_template('graph3.html', labels=labels, values1=values1)
 
+"""if __name__ == "__main__":
+    app.run(debug=True)"""
+    
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8000)
