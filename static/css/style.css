@@ -189,24 +189,15 @@ iframe {
     text-align: center;
     padding: 1% 0;
     margin: 0 auto;
-    display: inline-block;
+    display: flex;
     list-style-type: none;
     width: calc(100% - 125px);
     font-weight: 500;
     background-color: #a3daff;
     white-space: nowrap;
+    justify-content: space-around;
 }
 
 .data > ul > li {
-    display: inline-block;
-}
-
-.days > li {
-    margin: 0 5%;
-}
-
-.ratings > li {
-    margin: 0 1.4%;
-    font-size: 1vw;
-    
+    font-size: 1.7vw;
 }
