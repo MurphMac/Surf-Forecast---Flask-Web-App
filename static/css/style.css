@@ -31,7 +31,6 @@ body {
 
     .dailyinfo > ul > li {
         display: inline-block;
-        background-color: red;
         text-align: left;
         height: 10vh;
         width: 14vw;
@@ -108,27 +107,24 @@ body {
 
 .buttons {
     width: 100%;
-    display: inline-flex;
+    display: flex;
     list-style-type: none;
     margin: 0;
     padding: 0;
-    justify-content: center;
-}
-
-.buttons > li {
-    flex: 1;
+    justify-content: flex-end;
 }
 
 .button {
     background-color: #ff8aad;
     text-decoration: none;
     color: black;
-    margin: auto;
-    padding: 0 3%;
+    margin: 3vw;
+    padding: 1vh 1vw;
     border-radius: 3px;
     border: solid 4px #ff0c55;
     font-weight: 600;
     font-size: clamp(8px, 2vw, 24px);
+    white-space: nowrap;
 }
 
 .button:hover {

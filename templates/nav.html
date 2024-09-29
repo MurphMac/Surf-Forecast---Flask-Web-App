@@ -1,4 +1,4 @@
 <ul class="buttons">
     <li><a class='button' href="{{url_for('home')}}">Home</a></li>
-    <li><a class='button' href="{{url_for('account')}}">Login / View Account</a></li>
+    <li><a class='button' href="{{url_for('account')}}">{% if logged_in == True %}{{ account_name }} ({{ current_skill }}){% else %}Login / Sign up{% endif %}</a></li>
 </ul>

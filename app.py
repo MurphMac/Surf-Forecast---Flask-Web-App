@@ -17,6 +17,8 @@ db = SQLAlchemy(app)
 location_id = None
 logged_in = False
 account_name = ""
+current_skill = ""
+favourite_spot = "Tauranga"
 
 insertdata.sourcedata()
 
@@ -59,34 +61,43 @@ def home():
 
     global location_id
 
-    #Get variale from drop down box
+    global favourite_spot
+
+    #Get variabe from drop down box
     location_name = request.form.get('location')
 
     locations_dictionary = {
-        "tauranga": 1,
-        "gisborne": 2,
-        "dunedin": 4,
-        "christchurch": 5
+        "Tauranga": 1,
+        "Gisborne": 2,
+        "Dunedin": 4,
+        "Christchurch": 5
     }
+
+    if location_name == None:
+        location_name = favourite_spot
 
     #Get corresponding ID
     location_id = locations_dictionary.get(location_name)
 
     global logged_in
 
-    #Manually set skill for now
-    skill = ""
+    global account_name
+
+    global current_skill
 
     #Run rating function
-    ratings = surfrating.get_rating(location_id, skill)
+    ratings = surfrating.get_rating(location_id, current_skill)
 
-    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in, ratings=ratings)
+    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in, account_name=account_name, ratings=ratings, current_skill=current_skill)
 
 @app.route('/login', methods = ['GET', 'POST'])
 
 def login():
     global logged_in
     global account_name
+    global current_skill
+    global favourite_spot
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -98,7 +109,10 @@ def login():
         else:
             logged_in = True
             account_name = username
-            return render_template('account.html', account_name=account_name)
+            #Fetch current user details including the skill level
+            cursor.execute("SELECT skill FROM user WHERE username=?", (account_name,))
+            current_skill = cursor.fetchone()[0]
+            return render_template('account.html', account_name=account_name, logged_in=logged_in, current_skill=current_skill, favourite_spot=favourite_spot)
 
     else:
         request.method == 'GET'
@@ -117,6 +131,7 @@ def register():
             username = request.form['username']
             password = request.form['password']
             skill = request.form['skill']
+            favourite_location = request.form['favourite_location']
             cursor.execute(f"SELECT * FROM user WHERE username='{username}' AND password='{password}';")
             data = cursor.fetchone()
             #Check if it matches other in db
@@ -125,7 +140,7 @@ def register():
             else:
                 if not data:
                     #Insert into db
-                    cursor.execute("INSERT INTO user (username, password, skill) VALUES (?,?,?)", (username, password, skill))
+                    cursor.execute("INSERT INTO user (username, password, skill, favourite_location) VALUES (?,?,?,?)", (username, password, skill, favourite_location))
                     conn.commit()
                     conn.close()
                 return render_template('login.html')
@@ -133,15 +148,40 @@ def register():
     elif request.method == 'GET':
         return render_template('register.html', form=registrationForm)
 
-@app.route('/account')
+@app.route('/account', methods=['GET', 'POST'])
 
 def account():
-    # Ensure logged_in is available
     global logged_in
     global account_name
+    global current_skill
+    global favourite_spot
+
     if not logged_in:
         return render_template('login.html')
-    return render_template('account.html', account_name=account_name)
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Fetch current user details including the skill level and favorite spot
+    cursor.execute("SELECT skill, favourite_location FROM user WHERE username=?", (account_name,))
+    result = cursor.fetchone()
+
+    current_skill = result[0]
+    favourite_spot = result[1]
+
+    if request.method == 'POST':
+        new_skill = request.form.get('skill', current_skill)  # Default to current skill if not changed
+        new_favourite_spot = request.form.get('favourite_location', favourite_spot)  # Same for favourite spot
+
+        cursor.execute("UPDATE user SET skill=?, favourite_location=? WHERE username=?", (new_skill, new_favourite_spot, account_name))
+        conn.commit()
+
+        current_skill = new_skill
+        favourite_spot = new_favourite_spot
+
+    conn.close()
+    
+    return render_template('account.html', account_name=account_name, logged_in=logged_in, current_skill=current_skill, favourite_spot=favourite_spot)
 
 @app.route('/graph1')
 def graphs1():
