@@ -35,18 +35,18 @@
 
     <ul class="ratings">
         {% for rating in ratings %}
-            <li>{{ rating }}</li>
+            <li class="{% if rating < 4 %}bad{% elif rating < 7 %}fair{% else %}good{% endif %}">{{ rating }}</li>
         {% endfor %}
     </ul>
 </div>
 
-<div class="data graph1">
+<div class="graph1">
     <iframe src="/graph1" scrolling="no"></iframe>
 </div>
-<div class="data graph2">
+<div class="graph2">
     <iframe src="/graph2" scrolling="no"></iframe>
 </div>
-<div class="data graph3">
+<div class="graph3">
     <iframe src="/graph3" scrolling="no"></iframe>
 </div>
 

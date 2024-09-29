@@ -45,6 +45,7 @@ def get_rating(location_id, skill):
 
     #Swell functions
     def swell_size_points(skill, swell_size):
+        global no_skill
         #Ideal wave height for different skills
         ideal_size = {
             "beginner": 0.7,
@@ -54,20 +55,31 @@ def get_rating(location_id, skill):
 
         #Get points for swell size
         if skill == "":
-            points = 2.5
+            points = 0
+            no_skill = True
         else:
             points = 2.5 * (0.5 * math.cos( 5 * (swell_size - ideal_size[skill]) + 0.5 ))
 
         return points
 
     def wave_period_points(swell_period):
+        global no_skill
+
         #Equate above 18s to 18s
         if swell_period >= 18:
             swell_period = 18
+
+        if no_skill == True:
+            no_skill_multiplier = 2
+        else:
+            no_skill_multiplier = 1
+
         #Calculate points
-        points = 2.5 * (1/18 * swell_period)
+        points = 2.5 * (1/18 * swell_period) * no_skill_multiplier
 
         return points
+
+    no_skill = False
 
     # Connection to the database
     conn = sqlite3.connect('database.db')
@@ -95,7 +107,7 @@ def get_rating(location_id, skill):
 
     #Get amount of points which wind will apply to and apply mutliplier based on direction and swell size and period contribute
     ratings = [
-        int(round(wind_points_multiplier(wind_magnitude_points(value[1]), value[0]) + swell_size_points(skill, value[2]) + wave_period_points(value[3]), 0))
+        int((round(wind_points_multiplier(wind_magnitude_points(value[1]), value[0]) + swell_size_points(skill, value[2]) + wave_period_points(value[3]), 0)))
         for value in averaged_data 
     ]
 

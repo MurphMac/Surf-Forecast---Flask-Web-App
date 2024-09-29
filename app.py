@@ -74,8 +74,10 @@ def home():
 
     global logged_in
 
+    #Manually set skill for now
     skill = ""
 
+    #Run rating function
     ratings = surfrating.get_rating(location_id, skill)
 
     return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in, ratings=ratings)

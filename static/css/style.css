@@ -158,6 +158,10 @@ body {
     padding: 1%;
 }
 
+.location_name {
+    margin: 0;
+}
+
 .dailyinfo {
     vertical-align: center;
     width: 90%;
@@ -183,6 +187,7 @@ iframe {
     margin: 0;
     padding: 0; 
     text-align: center;
+    background-color: #a3daff;
 }
 
 .data > ul {
@@ -200,4 +205,22 @@ iframe {
 
 .data > ul > li {
     font-size: 1.7vw;
+}
+
+.data > .ratings > li {
+    padding: 1%;
+    border-radius: 3px;
+    border: 1px solid black;
+}
+
+.bad {
+    background-color: rgb(219, 77, 77);
+}
+
+.fair {
+    background-color: rgb(255, 204, 0);
+}
+
+.good {
+    background-color: rgb(58, 255, 58);
 }
