@@ -5,6 +5,7 @@ import sqlite3
 # Process tide data
 def process_tide_data(cursor, file_path, location_id):
     df_tide = pd.read_csv(file_path, header=7)
+    df_tide = df_tide.iloc[:169]
     
     # Create a list of tuples containing time and tide height
     tide_data = list(zip(df_tide['TIME'], df_tide['VALUE']))
@@ -28,7 +29,8 @@ def process_tide_data(cursor, file_path, location_id):
 # Process wind data
 def process_wind_data(cursor, file_path, location_id):
     df_wind = pd.read_csv(file_path)
-    df_wind.drop(index=df_wind.index[-12:], axis=0, inplace=True)  # Drop last 12 rows
+    #Make it 57 rows of data (7 days)
+    df_wind = df_wind.iloc[:57]
 
     wind_speed = [round(x, 2) for x in df_wind['wind_speed_at_10m_above_ground_level:kt']]
     gust_speed = [round(x, 2) for x in df_wind['wind_speed_of_gust_at_10m_above_ground_level:kt']]
@@ -45,7 +47,7 @@ def process_wind_data(cursor, file_path, location_id):
 # Process swell data
 def process_swell_data(cursor, file_path, location_id):
     df_swell = pd.read_csv(file_path)
-    df_swell.drop(index=df_swell.index[-12:], axis=0, inplace=True)  # Drop last 12 rows
+    df_swell = df_swell.iloc[:169]
 
     swell_size = [round(x, 2) for x in df_swell['hs:m']]
     swell_period = list(df_swell['tp:s'])
@@ -72,13 +74,29 @@ def sourcedata():
     conn.commit()
 
     # Process all data
+    process_tide_data(cursor, r'data/TAU_results.csv', location_id=1)
+    process_wind_data(cursor, r'data/TAU_gfs025_sub_v1.0.csv', location_id=1)
+    process_swell_data(cursor, r'data/TAU_swan_gfs_nz-bop_v3.0_rcm61szc.csv', location_id=1)
+
+    process_tide_data(cursor, r'data/GIS_results.csv', location_id=2)
+    process_wind_data(cursor, r'data/GIS_gfs025_sub_v1.0.csv', location_id=2)
+    process_swell_data(cursor, r'data/GIS_swan_gfs_nz-pbay_v3.0_rcneem8r.csv', location_id=2)
+
+    process_tide_data(cursor, r'data/DUN_results.csv', location_id=4)
+    process_wind_data(cursor, r'data/DUN_gfs025_sub_v1.0.csv', location_id=4)
+    process_swell_data(cursor, r'data/DUN_swan_gfs_nz-dnd_v3.0_pzc7zrrh.csv', location_id=4)
+
     process_tide_data(cursor, r'data/CHR_results.csv', location_id=5)
     process_wind_data(cursor, r'data/CHR_gfs025_sub_v1.0.csv', location_id=5)
     process_swell_data(cursor, r'data/CHR_swan_gfs_nz-ncanterb_v3.0_rb70bv50.csv', location_id=5)
 
-    process_tide_data(cursor, r'data/TAU_results.csv', location_id=1)
-    process_wind_data(cursor, r'data/TAU_gfs025_sub_v1.0.csv', location_id=1)
-    process_swell_data(cursor, r'data/TAU_swan_gfs_nz-bop_v3.0_rcm61szc.csv', location_id=1)
+    cursor.execute("""DELETE FROM time
+        WHERE time_id NOT IN (
+            SELECT time_id FROM time
+            ORDER BY time_id ASC
+            LIMIT 169
+        )
+    """)
 
     conn.commit()
     conn.close()

@@ -182,20 +182,31 @@ iframe {
     width: 100%;
     margin: 0;
     padding: 0; 
+    text-align: center;
 }
 
-.data.days {
-    display: flex;
-    justify-content: space-around; 
+.data > ul {
+    text-align: center;
+    padding: 1% 0;
+    margin: 0 auto;
+    display: inline-block;
+    list-style-type: none;
     width: calc(100% - 125px);
-    margin: auto;
     font-weight: 500;
     background-color: #a3daff;
+    white-space: nowrap;
 }
 
-.days > span {
-    flex: 1; 
-    text-align: center;
-    font-size: 13px; 
-    padding: 5px;  
+.data > ul > li {
+    display: inline-block;
+}
+
+.days > li {
+    margin: 0 5%;
+}
+
+.ratings > li {
+    margin: 0 1.4%;
+    font-size: 1vw;
+    
 }

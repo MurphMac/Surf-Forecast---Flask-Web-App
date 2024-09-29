@@ -6,8 +6,10 @@
     <form action="/" method="POST">
         <label for="locations">Select Location:</label>
         <select name="location" id="locations">
-            <option value="christchurch">Christchurch</option>
             <option value="tauranga">Tauranga</option>
+            <option value="gisborne">Gisborne</option>
+            <option value="dunedin">Dunedin</option>
+            <option value="christchurch">Christchurch</option>
         </select>
         <button class="button" type="submit">Refresh</button>
     </form>
@@ -20,32 +22,22 @@
     </script>
 </div>
 
-<div class="data days">
-    <span id="day1" class="day1"></span>
-    <span id="day2" class="day2"></span>
-    <span id="day3" class="day3"></span>
-    <span id="day4" class="day4"></span>
-    <span id="day5" class="day5"></span>
-    <span id="day6" class="day6"></span>
-    <span id="day7" class="day7"></span>
-    <script>
-        // Get day values from app.py
-        var day1 = "{{ day1 | safe }}";
-        var day2 = "{{ day2 | safe }}";
-        var day3 = "{{ day3 | safe }}";
-        var day4 = "{{ day4 | safe }}";
-        var day5 = "{{ day5 | safe }}";
-        var day6 = "{{ day6 | safe }}";
-        var day7 = "{{ day7 | safe }}";
-        // Add days to spans
-        document.getElementById("day1").innerHTML = day1;
-        document.getElementById("day2").innerHTML = day2;
-        document.getElementById("day3").innerHTML = day3;
-        document.getElementById("day4").innerHTML = day4;
-        document.getElementById("day5").innerHTML = day5;
-        document.getElementById("day6").innerHTML = day6;
-        document.getElementById("day7").innerHTML = day7;
-    </script>
+<div class="data">
+    <ul class="days">
+        <li>{{ day1 }}</li>
+        <li>{{ day2 }}</li>
+        <li>{{ day3 }}</li>
+        <li>{{ day4 }}</li>
+        <li>{{ day5 }}</li>
+        <li>{{ day6 }}</li>
+        <li>{{ day7 }}</li>
+    </ul>
+
+    <ul class="ratings">
+        {% for rating in ratings %}
+            <li>{{ rating }}</li>
+        {% endfor %}
+    </ul>
 </div>
 
 <div class="data graph1">

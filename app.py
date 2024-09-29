@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import calendar
 import sqlite3
 import insertdata
+import surfrating
 from form import RegistrationForm
 
 app = Flask(__name__)
@@ -62,8 +63,10 @@ def home():
     location_name = request.form.get('location')
 
     locations_dictionary = {
-        "christchurch": 5,
-        "tauranga": 1
+        "tauranga": 1,
+        "gisborne": 2,
+        "dunedin": 4,
+        "christchurch": 5
     }
 
     #Get corresponding ID
@@ -71,7 +74,11 @@ def home():
 
     global logged_in
 
-    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in)
+    skill = ""
+
+    ratings = surfrating.get_rating(location_id, skill)
+
+    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in, ratings=ratings)
 
 @app.route('/login', methods = ['GET', 'POST'])
 
