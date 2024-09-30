@@ -21,7 +21,7 @@ body {
     }
     .wrapper {
         grid-template-columns: 60% 40%;
-        grid-template-rows: 12vh 20vh 150vh 15vh;
+        grid-template-rows: 12vh 20vh 160vh 15vh;
         grid-template-areas: 
         "banner nav"
         "sidebar sidebar"
@@ -47,7 +47,7 @@ body {
     }
     .wrapper {
         grid-template-columns: 60% 20% 20%;
-        grid-template-rows: 12vh 150vh 15vh;
+        grid-template-rows: 12vh 160vh 15vh;
         grid-template-areas: 
         "banner nav nav"
         "main main sidebar"
@@ -125,6 +125,7 @@ body {
     font-weight: 600;
     font-size: clamp(8px, 2vw, 24px);
     white-space: nowrap;
+    list-style: none;
 }
 
 .button:hover {
@@ -220,3 +221,8 @@ iframe {
 .good {
     background-color: rgb(58, 255, 58);
 }
+
+.account_content {
+    text-align: center;
+}
+

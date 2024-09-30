@@ -1,37 +1,43 @@
 {% extends 'layout.html' %} 
 
 {% block main_content %}
-<h1>Register Page</h1>
 
-<form action="/register" method="POST">
+<div class="account_content">
 
-    {{ form.hidden_tag() }}
+    <h1>Register Page</h1>
 
-    <div class="table-selection">
-        <table>
-            <tr>
-                <td>{{form.username.label}}</td>
-                <td>{{form.username}}</td>
-            </tr>
-            <tr>
-                <td>{{form.password.label}}</td>
-                <td>{{form.password}}</td>
-            </tr>
-            <tr>
-                <td>{{form.skill.label}}</td>
-                <td>{{form.skill}}</td>
-            </tr>
-            <tr>
-                <td>{{form.favourite_location.label}}</td>
-                <td>{{form.favourite_location}}</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>{{form.submit(class="anchor-button")}}</td>
-            </tr>
-        </table>
-    </div>
-</form>
+    <form action="/register" method="POST">
 
-<a href="{{url_for('login')}}">Already have an account? Login</a>
+        {{ form.hidden_tag() }}
+
+        <div class="table-selection">
+            <table>
+                <tr>
+                    <td>{{form.username.label}}</td>
+                    <td>{{form.username}}</td>
+                </tr>
+                <tr>
+                    <td>{{form.password.label}}</td>
+                    <td>{{form.password}}</td>
+                </tr>
+                <tr>
+                    <td>{{form.skill.label}}</td>
+                    <td>{{form.skill}}</td>
+                </tr>
+                <tr>
+                    <td>{{form.favourite_location.label}}</td>
+                    <td>{{form.favourite_location}}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>{{form.submit(class="anchor-button")}}</td>
+                </tr>
+            </table>
+        </div>
+    </form>
+
+    <a href="{{url_for('login')}}">Already have an account? Login</a>
+
+</div>
+
 {% endblock %}

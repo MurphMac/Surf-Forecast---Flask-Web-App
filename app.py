@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
-import pandas as pd
-from datetime import datetime, timedelta
+#import pandas as pd
+#from datetime import datetime, timedelta
 import calendar
 import sqlite3
 import insertdata
@@ -22,46 +22,30 @@ favourite_spot = "Tauranga"
 
 insertdata.sourcedata()
 
-@app.route('/', methods = ['GET', 'POST'])
-
-def home():
-    #Open database
+def get_days():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-
-    #Get dates and times
     cursor.execute('''SELECT date_time FROM time''')
     data = cursor.fetchall()
-    #Make into list
     dates = [row[0] for row in data]
     conn.close()
 
-    # Variables for weekdays
     days = []
     for date in dates:
-        #Grab year, month, day of each row
         year, month, day = int(date[0:4]), int(date[5:7]), int(date[8:10])
-        #Add weekday value to list
         weekday = calendar.day_name[calendar.weekday(year, month, day)]
         weekday = str(weekday)[0:3]
-        #Get name of month
         month_name = str(calendar.month_name[month])[0:3]
         days.append(f"{weekday} {day} {month_name}")
-        #Remove duplicates
-        days = list(dict.fromkeys(days))
+    days = list(dict.fromkeys(days))
 
-    #Assign value to each day on the graph
-    day1=(days[0])
-    day2=(days[1])
-    day3=(days[2])
-    day4=(days[3])
-    day5=(days[4])
-    day6=(days[5])
-    day7=(days[6])
+    return days
 
-    global location_id
-
+def get_ratings():
+    global current_skill
     global favourite_spot
+    global location_id
+    global location_name
 
     #Get variabe from drop down box
     location_name = request.form.get('location')
@@ -79,14 +63,21 @@ def home():
     #Get corresponding ID
     location_id = locations_dictionary.get(location_name)
 
-    global logged_in
-
-    global account_name
-
-    global current_skill
-
     #Run rating function
     ratings = surfrating.get_rating(location_id, current_skill)
+
+    return ratings
+
+
+@app.route('/', methods = ['GET', 'POST'])
+
+def home():
+    global logged_in
+    #Get days for each day displayed in graphs using function
+    days = get_days()
+    day1, day2, day3, day4, day5, day6, day7 = days[:7]
+
+    ratings = get_ratings()
 
     return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in, account_name=account_name, ratings=ratings, current_skill=current_skill)
 
@@ -183,7 +174,53 @@ def account():
     
     return render_template('account.html', account_name=account_name, logged_in=logged_in, current_skill=current_skill, favourite_spot=favourite_spot)
 
+@app.route('/signout')
+
+def signout():
+    global favourite_spot
+    favourite_spot = "Tauranga"
+    #Sign out of account
+    global logged_in
+    logged_in = False
+
+    #Get days for each day displayed in graphs using function
+    days = get_days()
+    day1, day2, day3, day4, day5, day6, day7 = days[:7]
+
+    #Get ratings for each day
+    ratings = get_ratings()
+
+    return render_template('home.html', day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, logged_in=logged_in, account_name=account_name, ratings=ratings, current_skill=current_skill, favourite_spot=favourite_spot)
+
+@app.route('/delete')
+
+def delete():
+    global favourite_spot
+    favourite_spot = "Tauranga"
+    global logged_in
+    global account_name
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    cursor.execute('DELETE FROM user WHERE username=?', (account_name,))
+    conn.commit()
+    conn.close()
+
+    logged_in = False
+    account_name = ""
+
+    #Get days for each day displayed in graphs using function
+    days = get_days()
+    day1, day2, day3, day4, day5, day6, day7 = days[:7]
+
+    #Get ratings for each day
+    ratings = get_ratings()
+
+    return render_template('home.html', day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, logged_in=logged_in, account_name=account_name, ratings=ratings, current_skill=current_skill, favourite_spot=favourite_spot)
+
 @app.route('/graph1')
+
 def graphs1():
 
     #Access location_id

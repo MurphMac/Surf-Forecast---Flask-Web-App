@@ -1,37 +1,49 @@
 {% extends 'layout.html' %} 
 
 {% block main_content %}
+
+<div class="account_content">
     
-<h1>Hello, {{account_name}}</h1>
+  <h1>Hello, {{account_name}}</h1>
 
-{% if logged_in %}
-  <!-- Update Skill Form -->
-  <form method="POST">
-    <label for="skill">Skill Level:</label>
-    <select id="skill" name="skill">
-      <option value="Beginner" {% if current_skill == 'Beginner' %}selected{% endif %}>Beginner</option>
-      <option value="Intermediate" {% if current_skill == 'Intermediate' %}selected{% endif %}>Intermediate</option>
-      <option value="Advanced" {% if current_skill == 'Advanced' %}selected{% endif %}>Advanced</option>
-    </select>
-    <button type="submit">Update Skill</button>
-  </form>
+  {% if logged_in %}
+    <!-- Update Skill Form -->
+    <form method="POST">
+      <label for="skill">Skill Level:</label>
+      <select id="skill" name="skill">
+        <option value="Beginner" {% if current_skill == 'Beginner' %}selected{% endif %}>Beginner</option>
+        <option value="Intermediate" {% if current_skill == 'Intermediate' %}selected{% endif %}>Intermediate</option>
+        <option value="Advanced" {% if current_skill == 'Advanced' %}selected{% endif %}>Advanced</option>
+      </select>
+      <button type="submit">Update Skill</button>
+    </form>
 
-  <!-- Update Favourite Location Form -->
-  <form method="POST">
-    <label for="favourite_location">Favourite Location:</label>
-    <select id="favourite_location" name="favourite_location">
-      <option value="Tauranga" {% if favourite_spot == 'Tauranga' %}selected{% endif %}>Tauranga</option>
-      <option value="Gisborne" {% if favourite_spot == 'Gisborne' %}selected{% endif %}>Gisborne</option>
-      <option value="Dunedin" {% if favourite_spot == 'Dunedin' %}selected{% endif %}>Dunedin</option>
-      <option value="Christchurch" {% if favourite_spot == 'Christchurch' %}selected{% endif %}>Christchurch</option>
-    </select>
-    <button type="submit">Update Spot</button>
-  </form>
+    <!-- Update Favourite Location Form -->
+    <form method="POST">
+      <label for="favourite_location">Favourite Location:</label>
+      <select id="favourite_location" name="favourite_location">
+        <option value="Tauranga" {% if favourite_spot == 'Tauranga' %}selected{% endif %}>Tauranga</option>
+        <option value="Gisborne" {% if favourite_spot == 'Gisborne' %}selected{% endif %}>Gisborne</option>
+        <option value="Dunedin" {% if favourite_spot == 'Dunedin' %}selected{% endif %}>Dunedin</option>
+        <option value="Christchurch" {% if favourite_spot == 'Christchurch' %}selected{% endif %}>Christchurch</option>
+      </select>
+      <button type="submit">Update Spot</button>
+    </form>
 
-  <p>Your current skill level is: {{ current_skill }}</p>
-  <p>Your current Favourite Spot is: {{ favourite_spot }}</p>
-{% else %}
-  <p>Please log in to view your account details.</p>
-{% endif %}
+    <p>Your current skill level is: {{ current_skill }}</p>
+    <p>Your current Favourite Spot is: {{ favourite_spot }}</p>
+
+    <ul class="account_buttons">
+      <li><a class='button' href="{{url_for('signout')}}">Sign Out</a></li>
+      <li><a class='button' href="{{url_for('delete')}}">Delete Account</a></li>
+    </ul>
+    
+    
+
+  {% else %}
+    <p>Please log in to view your account details.</p>
+  {% endif %}
+
+</div>
 
 {% endblock %}
