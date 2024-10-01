@@ -1,12 +1,12 @@
 from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
-#import pandas as pd
-#from datetime import datetime, timedelta
 import calendar
 import sqlite3
 import insertdata
 import surfrating
+import current_stats
 from form import RegistrationForm
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -68,16 +68,32 @@ def get_ratings():
 
     return ratings
 
+@app.context_processor
+
+def inject_common_data():
+    live_data = current_stats.get_current_stats(location_id)
+
+    current_rating = surfrating.get_current_rating(location_id, live_data, current_skill)
+
+    wind_direction = surfrating.wind_type(location_id, live_data)
+
+    current_date = datetime.now().strftime("%A %d %B %Y")
+
+    return dict(live_data=live_data, current_rating=current_rating, wind_direction=wind_direction, current_date=current_date)
 
 @app.route('/', methods = ['GET', 'POST'])
 
 def home():
     global logged_in
+    global location_id
+    global current_skill
+
     #Get days for each day displayed in graphs using function
     days = get_days()
     day1, day2, day3, day4, day5, day6, day7 = days[:7]
 
     ratings = get_ratings()
+
 
     return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in, account_name=account_name, ratings=ratings, current_skill=current_skill)
 

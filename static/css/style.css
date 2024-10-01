@@ -29,12 +29,16 @@ body {
         "footer footer";
     }
 
+    .dailyinfo > ul {
+        align-items: stretch;
+        flex-direction: row;
+        padding: 20px;
+    }
+
     .dailyinfo > ul > li {
-        display: inline-block;
-        text-align: left;
-        height: 10vh;
-        width: 14vw;
-        margin-left: 1vw;
+        text-align: center;
+        flex: 1 1 0px;
+        font-size: 2vw;
     }
 }
 
@@ -54,10 +58,15 @@ body {
         "footer footer footer";
     }
 
+    .dailyinfo > ul {
+        flex-direction: column;
+        margin: 1vw 1vh;
+    }
+
     .dailyinfo > ul > li {
-        display: block;
         text-align: left;
-        height: 25vh;
+        padding: 1vw;
+        font-size: 1wv;
     }
 }
 
@@ -132,6 +141,21 @@ body {
     background-color: #ffe45e;
 }
 
+.dailyinfo > ul {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    gap: 1vw;
+}
+
+.dailyinfo > ul > li {
+    list-style: none;
+    background-color: white;
+    flex: 1 1 0px;
+    border-radius: 5px;
+    border: 0.4vw solid #2d93e0;
+}
+
 .location_selection {
     text-align: center;
     background-color: #a3daff;
@@ -159,16 +183,8 @@ body {
     margin: 0;
 }
 
-.dailyinfo {
-    vertical-align: center;
-    width: 90%;
-}
-
 .dailyinfo > ul {
-    margin: auto;
     background-color: #ffe45e;
-    padding: 0;
-    margin-left: 10%;
 }
 
 iframe {

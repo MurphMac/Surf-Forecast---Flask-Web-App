@@ -21,26 +21,31 @@
     <div class="box sidebar">
       <div class="dailyinfo">
         <ul>
-            <li>
-              <h3>Surf Rating:</h3>
-              <h3>Data</h3>
-            </li>
-            <li>
-              <h3>Swell:</h3>
-              <h3>Data</h3>
-            </li>
-            <li>
-              <h3>Wind:</h3>
-              <h3>Data</h3>
-            </li>
-            <li>
-              <h3>Wind type:</h3>
-              <h3>Data</h3>
-            </li>
-            <li>
-              <h3>Tide:</h3>
-              <h3>Data</h3>
-            </li>
+          <li>
+            <h3>{{ current_date }}</h3>
+          </li>
+          <li>
+            <h3>Surf Rating:</h3>
+            <h3>{{ current_rating }}/10</h3>
+          </li>
+          <li>
+            <h3>Wind Type:</h3>
+            <h3>{{ wind_direction }} wind</h3>
+          </li>
+          <li>
+            <h3>Wind:</h3>
+            <h3>{{ live_data[2] }} knots</h3>
+            <h3>{{ live_data[3] }} knots gusts</h3>
+          </li>
+          <li>
+            <h3>Waves:</h3>
+            <h3>{{ live_data[4] }} metre swell</h3>
+            <h3>{{ live_data[5] }} second period</h3>
+          </li>
+          <li>
+            <h3>Tide:</h3>
+            <h3>{{ live_data[6] }} metres</h3>
+          </li>
         </ul>
       </div>
     </div>
