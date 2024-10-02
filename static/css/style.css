@@ -21,7 +21,7 @@ body {
     }
     .wrapper {
         grid-template-columns: 60% 40%;
-        grid-template-rows: 12vh 20vh 160vh 15vh;
+        grid-template-rows: 12vh auto 160vh 15vh;
         grid-template-areas: 
         "banner nav"
         "sidebar sidebar"
@@ -38,6 +38,14 @@ body {
     .dailyinfo > ul > li {
         text-align: center;
         flex: 1 1 0px;
+        font-size: 2vw;
+    }
+
+    .location_selection > form {
+        scale: 1.2; /*Slightly reduce scale to fit better*/
+    }
+
+    .footer_list > li {
         font-size: 2vw;
     }
 }
@@ -112,6 +120,8 @@ body {
     background-color: #2d93e0;
     display: flex;
     align-items: center;
+    justify-content: space-around;
+    padding: 0 1vw
 }
 
 .buttons {
@@ -239,6 +249,18 @@ iframe {
 }
 
 .account_content {
-    text-align: center;
+    text-align: left;
+    background-color: #a3daff;
+    border: 4px solid #2d93e0;
+    border-radius: 10px;
+    margin: 3vh 20vw 10vh 3vh;
+    padding: 5vw;
 }
+
+.footer_list {
+    margin: 0 10vw;
+}
+
+
+
 
