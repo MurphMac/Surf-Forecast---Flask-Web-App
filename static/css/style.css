@@ -257,6 +257,18 @@ iframe {
     padding: 5vw;
 }
 
+.account_buttons {
+    list-style: none;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.account_buttons > li {
+    margin-top: 10vh;
+    flex: 1;
+}
+
 .footer_list {
     margin: 0 10vw;
 }

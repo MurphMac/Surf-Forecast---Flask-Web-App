@@ -9,6 +9,7 @@
   {% if logged_in %}
     <!-- Update Skill Form -->
     <form method="POST">
+      <input type="hidden" name="form_type" value="update_skill">
       <label for="skill">Skill Level:</label>
       <select id="skill" name="skill">
         <option value="Beginner" {% if current_skill == 'Beginner' %}selected{% endif %}>Beginner</option>
@@ -20,6 +21,7 @@
 
     <!-- Update Favourite Location Form -->
     <form method="POST">
+      <input type="hidden" name="form_type" value="update_location">
       <label for="favourite_location">Favourite Location:</label>
       <select id="favourite_location" name="favourite_location">
         <option value="Tauranga" {% if favourite_spot == 'Tauranga' %}selected{% endif %}>Tauranga</option>
@@ -29,6 +31,7 @@
       </select>
       <button type="submit">Update Spot</button>
     </form>
+
 
     <p>Your current skill level is: {{ current_skill }}</p>
     <p>Your current Favourite Spot is: {{ favourite_spot }}</p>

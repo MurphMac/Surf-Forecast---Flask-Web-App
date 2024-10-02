@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 import calendar
 import sqlite3
@@ -14,15 +14,33 @@ app.config['SECRET_KEY'] = 'testkey'
 
 db = SQLAlchemy(app)
 
-location_id = None
-logged_in = False
-account_name = ""
-current_skill = ""
-favourite_spot = "Tauranga"
-
 insertdata.sourcedata()
 
-def get_days():
+@app.context_processor
+
+def inject_common_data():
+    live_data = current_stats.get_current_stats(session.get('location_id'))
+
+    current_rating = surfrating.get_current_rating(session.get('location_id'), live_data, session.get('current_skill', ""))
+
+    wind_direction = surfrating.wind_type(session.get('location_id'), live_data)
+
+    current_date = datetime.now().strftime("%A %d %B %Y")
+
+    return dict(live_data=live_data, current_rating=current_rating, wind_direction=wind_direction, current_date=current_date)
+
+@app.route('/', methods=['GET', 'POST'])
+
+def home():
+    #Access session to get user info
+    logged_in = session.get('logged_in', False)
+    account_name = session.get('account_name', "")
+    
+    # Set default values if keys don't exist
+    current_skill = session.get('current_skill', "")
+    favourite_spot = session.get('favourite_spot', 'Tauranga')
+
+    # Get day titles for surf forecast
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute('''SELECT date_time FROM time''')
@@ -30,6 +48,7 @@ def get_days():
     dates = [row[0] for row in data]
     conn.close()
 
+    #Get days for each day of data displayed
     days = []
     for date in dates:
         year, month, day = int(date[0:4]), int(date[5:7]), int(date[8:10])
@@ -38,17 +57,17 @@ def get_days():
         month_name = str(calendar.month_name[month])[0:3]
         days.append(f"{weekday} {day} {month_name}")
     days = list(dict.fromkeys(days))
+    day1, day2, day3, day4, day5, day6, day7 = days[:7]
 
-    return days
-
-def get_ratings():
-    global current_skill
-    global favourite_spot
-    global location_id
-    global location_name
-
-    #Get variabe from drop down box
+    #Option for user to change location
     location_name = request.form.get('location')
+    #If they have selected
+    if location_name:
+        session['location_name'] = location_name
+    else:
+        #Set it to favourite spot
+        location_name = session.get('location_name', favourite_spot)
+        session['location_name'] = location_name
 
     locations_dictionary = {
         "Tauranga": 1,
@@ -56,74 +75,47 @@ def get_ratings():
         "Dunedin": 4,
         "Christchurch": 5
     }
-
-    if location_name == None:
-        location_name = favourite_spot
-
-    #Get corresponding ID
+    
+    #Get ID corresponding to location
     location_id = locations_dictionary.get(location_name)
+    session['location_id'] = location_id
 
-    #Run rating function
+    #Get the ratings from the rating function according to the location
     ratings = surfrating.get_rating(location_id, current_skill)
 
-    return ratings
+    location_name = session.get('location_name')
+    
+    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in, account_name=account_name, ratings=ratings, current_skill=current_skill, favourite_spot=favourite_spot)
 
-@app.context_processor
-
-def inject_common_data():
-    live_data = current_stats.get_current_stats(location_id)
-
-    current_rating = surfrating.get_current_rating(location_id, live_data, current_skill)
-
-    wind_direction = surfrating.wind_type(location_id, live_data)
-
-    current_date = datetime.now().strftime("%A %d %B %Y")
-
-    return dict(live_data=live_data, current_rating=current_rating, wind_direction=wind_direction, current_date=current_date)
-
-@app.route('/', methods = ['GET', 'POST'])
-
-def home():
-    global logged_in
-    global location_id
-    global current_skill
-
-    #Get days for each day displayed in graphs using function
-    days = get_days()
-    day1, day2, day3, day4, day5, day6, day7 = days[:7]
-
-    ratings = get_ratings()
-
-
-    return render_template("home.html", day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, location_name=location_name, logged_in=logged_in, account_name=account_name, ratings=ratings, current_skill=current_skill)
-
-@app.route('/login', methods = ['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 
 def login():
-    global logged_in
-    global account_name
-    global current_skill
-    global favourite_spot
-
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
         conn = sqlite3.connect('database.db')
         cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM user WHERE username='{username}' AND password='{password}';")
-        if not cursor.fetchone():
-            return render_template('login.html')
-        else:
-            logged_in = True
-            account_name = username
-            #Fetch current user details including the skill level
-            cursor.execute("SELECT skill FROM user WHERE username=?", (account_name,))
-            current_skill = cursor.fetchone()[0]
-            return render_template('account.html', account_name=account_name, logged_in=logged_in, current_skill=current_skill, favourite_spot=favourite_spot)
+        cursor.execute("SELECT * FROM user WHERE username=? AND password=?", (username, password))
+        user = cursor.fetchone()
+        
+        if user is None:
+            return render_template('login.html', error="Invalid credentials")
+        
+        #Set session variables
+        session['logged_in'] = True
+        session['account_name'] = username
+        
+        #Fetch current user details including the skill level
+        cursor.execute("SELECT skill, favourite_location FROM user WHERE username=?", (username,))
+        result = cursor.fetchone()
+        session['current_skill'] = result[0]
+        session['favourite_spot'] = result[1]
+        conn.close()
+        
+        return redirect(url_for('account'))
 
-    else:
-        request.method == 'GET'
-        return render_template('login.html')
+    return render_template('login.html')
 
 @app.route('/register', methods = ['GET', 'POST'])
 
@@ -158,89 +150,69 @@ def register():
 @app.route('/account', methods=['GET', 'POST'])
 
 def account():
-    global logged_in
-    global account_name
-    global current_skill
-    global favourite_spot
-
-    if not logged_in:
+    if not session.get('logged_in'):
         return render_template('login.html')
 
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Fetch current user details including the skill level and favorite spot
-    cursor.execute("SELECT skill, favourite_location FROM user WHERE username=?", (account_name,))
+    # Fetch current user details
+    cursor.execute("SELECT skill, favourite_location FROM user WHERE username=?", (session['account_name'],))
     result = cursor.fetchone()
 
-    current_skill = result[0]
-    favourite_spot = result[1]
+    # Initialize
+    session['current_skill'] = result[0]
+    session['favourite_spot'] = result[1]
 
     if request.method == 'POST':
-        new_skill = request.form.get('skill', current_skill)  # Default to current skill if not changed
-        new_favourite_spot = request.form.get('favourite_location', favourite_spot)  # Same for favourite spot
+        form_type = request.form.get('form_type')
 
-        cursor.execute("UPDATE user SET skill=?, favourite_location=? WHERE username=?", (new_skill, new_favourite_spot, account_name))
+        if form_type == 'update_skill':
+            new_skill = request.form.get('skill', session['current_skill'])
+            cursor.execute("UPDATE user SET skill=? WHERE username=?", (new_skill, session['account_name']))
+            session['current_skill'] = new_skill
+        
+        elif form_type == 'update_location':
+            new_favourite_spot = request.form.get('favourite_location', session['favourite_spot'])
+            cursor.execute("UPDATE user SET favourite_location=? WHERE username=?", (new_favourite_spot, session['account_name']))
+            session['favourite_spot'] = new_favourite_spot
+            session['location_name'] = new_favourite_spot  # Update the session with the new favorite location
+
         conn.commit()
 
-        current_skill = new_skill
-        favourite_spot = new_favourite_spot
-
     conn.close()
-    
-    return render_template('account.html', account_name=account_name, logged_in=logged_in, current_skill=current_skill, favourite_spot=favourite_spot)
+
+    return render_template('account.html', account_name=session['account_name'], logged_in=session['logged_in'], current_skill=session['current_skill'], favourite_spot=session['favourite_spot'])
 
 @app.route('/signout')
 
 def signout():
-    global favourite_spot
-    favourite_spot = "Tauranga"
-    #Sign out of account
-    global logged_in
-    logged_in = False
+    #Clear the session data
+    session.clear()
 
-    #Get days for each day displayed in graphs using function
-    days = get_days()
-    day1, day2, day3, day4, day5, day6, day7 = days[:7]
-
-    #Get ratings for each day
-    ratings = get_ratings()
-
-    return render_template('home.html', day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, logged_in=logged_in, account_name=account_name, ratings=ratings, current_skill=current_skill, favourite_spot=favourite_spot)
+    return redirect(url_for('home'))
 
 @app.route('/delete')
 
 def delete():
-    global favourite_spot
-    favourite_spot = "Tauranga"
-    global logged_in
-    global account_name
-
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    cursor.execute('DELETE FROM user WHERE username=?', (account_name,))
+    cursor.execute('DELETE FROM user WHERE username=?', (session['account_name'],))
     conn.commit()
     conn.close()
 
-    logged_in = False
-    account_name = ""
+    #Clear the session data
+    session.clear()
 
-    #Get days for each day displayed in graphs using function
-    days = get_days()
-    day1, day2, day3, day4, day5, day6, day7 = days[:7]
+    return redirect(url_for('home'))
 
-    #Get ratings for each day
-    ratings = get_ratings()
-
-    return render_template('home.html', day1=day1, day2=day2, day3=day3, day4=day4, day5=day5, day6=day6, day7=day7, logged_in=logged_in, account_name=account_name, ratings=ratings, current_skill=current_skill, favourite_spot=favourite_spot)
 
 @app.route('/graph1')
 
 def graphs1():
-
     #Access location_id
-    global location_id
+    location_id = session['location_id']
     
     # Open database
     conn = sqlite3.connect('database.db')
@@ -268,9 +240,8 @@ def graphs1():
 @app.route('/graph2')
 
 def graphs2():
-
     #Access location_id
-    global location_id
+    location_id = session['location_id']
 
     #Open database
     conn = sqlite3.connect('database.db')
@@ -299,9 +270,8 @@ def graphs2():
 @app.route('/graph3')
 
 def graphs3():
-
     #Access location_id
-    global location_id
+    location_id = session['location_id']
 
     #Open database
     conn = sqlite3.connect('database.db')
