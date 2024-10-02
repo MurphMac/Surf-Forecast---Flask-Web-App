@@ -18,6 +18,7 @@ insertdata.sourcedata()
 
 @app.context_processor
 
+#Variables accessed by all routes
 def inject_common_data():
     live_data = current_stats.get_current_stats(session.get('location_id'))
 
@@ -91,14 +92,18 @@ def home():
 
 def login():
     if request.method == 'POST':
+        #Form for user information
         username = request.form['username']
         password = request.form['password']
         
+        #Connect to db
         conn = sqlite3.connect('database.db')
         cursor = conn.cursor()
+        #Get stored information corresponding to what they entered
         cursor.execute("SELECT * FROM user WHERE username=? AND password=?", (username, password))
         user = cursor.fetchone()
         
+        #If it cannot be found
         if user is None:
             return render_template('login.html', error="Invalid credentials")
         
@@ -142,7 +147,7 @@ def register():
                     cursor.execute("INSERT INTO user (username, password, skill, favourite_location) VALUES (?,?,?,?)", (username, password, skill, favourite_location))
                     conn.commit()
                     conn.close()
-                return render_template('login.html')
+                return redirect(url_for('login'))
 
     elif request.method == 'GET':
         return render_template('register.html', form=registrationForm)
@@ -150,9 +155,11 @@ def register():
 @app.route('/account', methods=['GET', 'POST'])
 
 def account():
+    #They cannot access accound if they are not logged in
     if not session.get('logged_in'):
         return render_template('login.html')
 
+    #Connect to db
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
@@ -167,16 +174,18 @@ def account():
     if request.method == 'POST':
         form_type = request.form.get('form_type')
 
+        #If they choose to update their skill, update the database
         if form_type == 'update_skill':
             new_skill = request.form.get('skill', session['current_skill'])
             cursor.execute("UPDATE user SET skill=? WHERE username=?", (new_skill, session['account_name']))
             session['current_skill'] = new_skill
         
+        #If they choose to update their location, update the database
         elif form_type == 'update_location':
             new_favourite_spot = request.form.get('favourite_location', session['favourite_spot'])
             cursor.execute("UPDATE user SET favourite_location=? WHERE username=?", (new_favourite_spot, session['account_name']))
             session['favourite_spot'] = new_favourite_spot
-            session['location_name'] = new_favourite_spot  # Update the session with the new favorite location
+            session['location_name'] = new_favourite_spot
 
         conn.commit()
 
@@ -195,9 +204,11 @@ def signout():
 @app.route('/delete')
 
 def delete():
+    #Connect to database
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
+    #Remove the data corresponding to their username
     cursor.execute('DELETE FROM user WHERE username=?', (session['account_name'],))
     conn.commit()
     conn.close()
@@ -207,18 +218,17 @@ def delete():
 
     return redirect(url_for('home'))
 
-
 @app.route('/graph1')
 
 def graphs1():
     #Access location_id
     location_id = session['location_id']
     
-    # Open database
+    #Open database
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Execute query and fetch all data
+    #Execute query and fetch all data
     cursor.execute('''
         SELECT w.wind_speed, w.gust_speed, w.wind_direction, t.date_time
         FROM wind w
@@ -230,7 +240,7 @@ def graphs1():
     data = cursor.fetchall()
     conn.close()
 
-    # Extract values
+    #Extract values
     values1 = [row[0] for row in data]
     values2 = [row[1] for row in data]
     labels = [row[3][11:16] for row in data]

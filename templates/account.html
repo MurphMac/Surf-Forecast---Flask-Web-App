@@ -7,7 +7,7 @@
   <h1>Hello, {{account_name}}</h1>
 
   {% if logged_in %}
-    <!-- Update Skill Form -->
+    <!-- Skill Form -->
     <form method="POST">
       <input type="hidden" name="form_type" value="update_skill">
       <label for="skill">Skill Level:</label>
@@ -19,7 +19,7 @@
       <button type="submit">Update Skill</button>
     </form>
 
-    <!-- Update Favourite Location Form -->
+    <!-- Favourite Location Form -->
     <form method="POST">
       <input type="hidden" name="form_type" value="update_location">
       <label for="favourite_location">Favourite Location:</label>
@@ -41,8 +41,6 @@
       <li><a class='button' href="{{url_for('delete')}}">Delete Account</a></li>
     </ul>
     
-    
-
   {% else %}
     <p>Please log in to view your account details.</p>
   {% endif %}
