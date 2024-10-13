@@ -7,6 +7,7 @@ import surfrating
 import current_stats
 from form import RegistrationForm
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -306,4 +307,6 @@ def graphs3():
     return render_template('graph3.html', labels=labels, values1=values1)
     
 if __name__ == "__main__":
-    app.run()
+    #app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
